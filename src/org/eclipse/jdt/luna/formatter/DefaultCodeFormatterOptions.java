@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.compiler.util.Util;
-import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.luna.formatter.align.Alignment;
 
 /**
