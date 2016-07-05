@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matt McCutchen - fix for bug 197169 and complementary fix for 109636
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter.comment;
+package org.eclipse.jdt.luna.formatter.comment;
 
 import java.io.IOException;
 import java.io.Reader;

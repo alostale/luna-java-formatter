@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter.align;
+package org.eclipse.jdt.luna.formatter.align;
 
 /**
  * Exception used to backtrack and break available alignments

@@ -8,11 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter.align;
+package org.eclipse.jdt.luna.formatter.align;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jdt.internal.formatter.Location;
-import org.eclipse.jdt.internal.formatter.Scribe;
+import org.eclipse.jdt.luna.formatter.Location;
+import org.eclipse.jdt.luna.formatter.Scribe;
 
 /**
  * Alignment management

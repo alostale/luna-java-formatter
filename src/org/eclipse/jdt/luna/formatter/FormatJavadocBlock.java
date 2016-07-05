@@ -8,10 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter;
+package org.eclipse.jdt.luna.formatter;
 
 import org.eclipse.jdt.internal.compiler.parser.Scanner;
-import org.eclipse.jdt.internal.formatter.comment.IJavaDocTagConstants;
+import org.eclipse.jdt.luna.formatter.comment.IJavaDocTagConstants;
 
 /**
  * Represents a block in a {@link FormatJavadoc} which might be a

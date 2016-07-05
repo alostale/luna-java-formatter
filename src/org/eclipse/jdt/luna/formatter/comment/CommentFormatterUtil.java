@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter.comment;
+package org.eclipse.jdt.luna.formatter.comment;
 
 import java.util.Map;
 

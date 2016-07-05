@@ -11,7 +11,7 @@
  *     Ray V. (voidstar@gmail.com) - Contribution for bug 282988
  *     Jesper S Moller - Contribution for bug 402173
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter;
+package org.eclipse.jdt.luna.formatter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,8 @@ import java.util.Map;
 import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.compiler.util.Util;
-import org.eclipse.jdt.internal.formatter.align.Alignment;
+import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.luna.formatter.align.Alignment;
 
 /**
  * This is still subject to changes before 3.0.

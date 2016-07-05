@@ -15,7 +15,7 @@
  *                       Contribution for bug 402892
  *                       Contribution for bug 403881
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter;
+package org.eclipse.jdt.luna.formatter;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -127,8 +127,9 @@ import org.eclipse.jdt.internal.compiler.lookup.MethodScope;
 import org.eclipse.jdt.internal.compiler.parser.Scanner;
 import org.eclipse.jdt.internal.compiler.parser.TerminalTokens;
 import org.eclipse.jdt.internal.core.util.CodeSnippetParsingUtil;
-import org.eclipse.jdt.internal.formatter.align.Alignment;
-import org.eclipse.jdt.internal.formatter.align.AlignmentException;
+import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.luna.formatter.align.Alignment;
+import org.eclipse.jdt.luna.formatter.align.AlignmentException;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.text.edits.TextEdit;
 

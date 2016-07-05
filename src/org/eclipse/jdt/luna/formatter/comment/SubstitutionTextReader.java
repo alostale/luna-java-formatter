@@ -10,7 +10,7 @@
  *     Matt McCutchen - add check for EOF handling
  ******************************************************************************/
 
-package org.eclipse.jdt.internal.formatter.comment;
+package org.eclipse.jdt.luna.formatter.comment;
 
 
 import java.io.IOException;

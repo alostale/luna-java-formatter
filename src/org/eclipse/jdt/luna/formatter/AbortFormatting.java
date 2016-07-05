@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter;
+package org.eclipse.jdt.luna.formatter;
 
 /**
  * Unchecked exception wrapping invalid input checked exception which may occur

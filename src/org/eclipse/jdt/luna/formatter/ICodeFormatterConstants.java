@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jdt.internal.formatter;
+package org.eclipse.jdt.luna.formatter;
 
 /**
  * Internal code formatter constants.

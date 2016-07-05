@@ -12,7 +12,7 @@
  *                       Contribution for bug 402818
  *     Robin Stocker - Bug 49619 - [formatting] comment formatter leaves whitespace in comments
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter;
+package org.eclipse.jdt.luna.formatter;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -36,12 +36,13 @@ import org.eclipse.jdt.internal.compiler.parser.TerminalTokens;
 import org.eclipse.jdt.internal.compiler.util.Util;
 import org.eclipse.jdt.internal.core.util.CodeSnippetParsingUtil;
 import org.eclipse.jdt.internal.core.util.RecordedParsingInformation;
-import org.eclipse.jdt.internal.formatter.align.Alignment;
-import org.eclipse.jdt.internal.formatter.align.AlignmentException;
-import org.eclipse.jdt.internal.formatter.comment.CommentFormatterUtil;
-import org.eclipse.jdt.internal.formatter.comment.HTMLEntity2JavaReader;
-import org.eclipse.jdt.internal.formatter.comment.IJavaDocTagConstants;
-import org.eclipse.jdt.internal.formatter.comment.Java2HTMLEntityReader;
+import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.luna.formatter.align.Alignment;
+import org.eclipse.jdt.luna.formatter.align.AlignmentException;
+import org.eclipse.jdt.luna.formatter.comment.CommentFormatterUtil;
+import org.eclipse.jdt.luna.formatter.comment.HTMLEntity2JavaReader;
+import org.eclipse.jdt.luna.formatter.comment.IJavaDocTagConstants;
+import org.eclipse.jdt.luna.formatter.comment.Java2HTMLEntityReader;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.ILineTracker;
