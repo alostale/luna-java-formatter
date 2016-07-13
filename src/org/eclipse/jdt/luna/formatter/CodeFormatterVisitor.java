@@ -200,10 +200,10 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	// Array initializers information
 	int arrayInitializersDepth = -1;
 
-	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, Map settings, IRegion[] regions, CodeSnippetParsingUtil codeSnippetParsingUtil, boolean includeComments) {
+	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, Map<String, String> settings, IRegion[] regions, CodeSnippetParsingUtil codeSnippetParsingUtil, boolean includeComments) {
 		long sourceLevel = settings == null
 			? ClassFileConstants.JDK1_3
-			: CompilerOptions.versionToJdkLevel((String) settings.get(JavaCore.COMPILER_SOURCE));
+			: CompilerOptions.versionToJdkLevel(settings.get(JavaCore.COMPILER_SOURCE));
 		this.localScanner = new Scanner(true, false, false/*nls*/, sourceLevel/*sourceLevel*/, null/*taskTags*/, null/*taskPriorities*/, true/*taskCaseSensitive*/);
 
 		this.preferences = preferences;
