@@ -1862,7 +1862,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			boolean spaceAfterSemicolon,
 			int tryResourcesAligment) {
 
-		LocalDeclaration[] resources = tryStatement.resources;
+		Statement[] resources = tryStatement.resources;
 		int length = resources != null ? resources.length : 0;
 		if (length > 0) {
 			this.scribe.printNextToken(TerminalTokens.TokenNameLPAREN, spaceBeforeOpenParen);
