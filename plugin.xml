@@ -5,8 +5,8 @@
          point="org.eclipse.jdt.core.javaFormatter">
       <javaFormatter
             class="org.eclipse.jdt.luna.formatter.DefaultCodeFormatter"
-            id="LunaJavaFormatter.javaFormatter"
-            name="Luna Java Formatter">
+            id="OldJavaFormatter.javaFormatter"
+            name="Old Luna Java Formatter">
       </javaFormatter>
    </extension>
 
