@@ -13,4 +13,4 @@ Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/0
 
 ## Build
 1. Import as Eclipse project
-2. Build jar: `File > Export... > Deployable plug-ins fragmets`
+2. Build jar: `File > Export... > Deployable plug-ins fragments`
