@@ -6,7 +6,11 @@ Starting from Eclipse Mars (4.5) Java formatter was rewritten not being possible
 
 Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/06/eclipse-mars-how-to-switch-back-to.html).
 
-## Instalation
+## Installation
 1. Drop `OldFormater.java` in your `eclipse/dropins` directory
 2. Start Eclipse
 3. Open `Preferences > Java > Code Style > Formatter` and select `Old Luna Java Formatter` as `Formatter Implementation`
+
+## Build
+1. Import as Eclipse project
+2. Build jar: `File > Export... > Deployable plug-ins fragmets`
