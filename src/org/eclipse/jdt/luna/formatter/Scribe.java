@@ -193,7 +193,7 @@ public class Scribe implements IJavaDocTagConstants {
 		this.useTabsOnlyForLeadingIndents = formatter.preferences.use_tabs_only_for_leading_indentations;
 		this.indentEmptyLines = formatter.preferences.indent_empty_lines;
 		this.tabChar = formatter.preferences.tab_char;
-		if (this.tabChar == DefaultCodeFormatterOptions.MIXED) {
+		if (tabChar == DefaultCodeFormatterOptions.MIXED || tabChar == DefaultCodeFormatterOptions.SPACE) {
 			this.indentationSize = formatter.preferences.indentation_size;
 		} else {
 			this.indentationSize = this.tabLength;
