@@ -9,4 +9,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
  JavaSE-1.7,
  JavaSE-1.8,
  JavaSE-9
+Automatic-Module-Name: OldJavaFormatter
 
