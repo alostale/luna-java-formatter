@@ -20,6 +20,7 @@ import org.eclipse.jdt.internal.compiler.ast.Javadoc;
  * first block has no tag.
  * </p>
  */
+@SuppressWarnings("restriction")
 public class FormatJavadoc extends Javadoc {
 
 	FormatJavadocBlock[] blocks;

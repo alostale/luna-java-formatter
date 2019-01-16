@@ -147,7 +147,7 @@ import org.eclipse.text.edits.TextEdit;
       </codeFormatter>
    </extension>
 */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
 public class CodeFormatterVisitor extends ASTVisitor {
 
 	public static class MultiFieldDeclaration extends FieldDeclaration {
@@ -1264,17 +1264,17 @@ public class CodeFormatterVisitor extends ASTVisitor {
 
 		switch(kind) {
 			case TypeDeclaration.ENUM_DECL :
-				if (this.preferences.insert_new_line_in_empty_enum_declaration) {
+				if (this.legacyInsertNewLineInEmptyEnumDeclaration()) {
 					this.scribe.printNewLine();
 				}
 				break;
 			case TypeDeclaration.ANNOTATION_TYPE_DECL :
-				if (this.preferences.insert_new_line_in_empty_annotation_declaration) {
+				if (this.legacyInsertNewLineInEmptyAnnotationDeclaration()) {
 					this.scribe.printNewLine();
 				}
 				break;
 			default :
-				if (this.preferences.insert_new_line_in_empty_type_declaration) {
+				if (this.legacyInsertNewLineInEmptyTypeDeclaration()) {
 					this.scribe.printNewLine();
 				}
 		}
@@ -1325,7 +1325,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		formatTypeMembers(typeDeclaration);
 
 		this.scribe.unIndent();
-		if (this.preferences.insert_new_line_in_empty_anonymous_type_declaration) {
+		if (this.legacyInsertNewLineInEmptyAnonTypeDeclaration()) {
 			this.scribe.printNewLine();
 		}
 		this.scribe.printNextToken(TerminalTokens.TokenNameRBRACE);
@@ -1353,7 +1353,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			if (this.preferences.indent_statements_compare_to_block) {
 				this.scribe.unIndent();
 			}
-		} else if (this.preferences.insert_new_line_in_empty_block) {
+		} else if (this.legacyInsertNewLineInEmptyBlock()) {
 			this.scribe.printNewLine();
 			if (this.preferences.indent_statements_compare_to_block) {
 				this.scribe.indent();
@@ -2325,7 +2325,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 
 		if (!insertNewLine) {
 			if ((typeDeclaration.bits & ASTNode.IsAnonymousType) != 0) {
-				insertNewLine = this.preferences.insert_new_line_in_empty_enum_constant;
+				insertNewLine = this.legacyInsertNewLineInEmptyEnumConstant();
 			}
 		}
 
@@ -2356,13 +2356,13 @@ public class CodeFormatterVisitor extends ASTVisitor {
 
 		if (!insertNewLine) {
 			if (TypeDeclaration.kind(typeDeclaration.modifiers) == TypeDeclaration.ENUM_DECL) {
-				insertNewLine = this.preferences.insert_new_line_in_empty_enum_declaration;
+				insertNewLine = this.legacyInsertNewLineInEmptyEnumDeclaration();
 			} else if ((typeDeclaration.bits & ASTNode.IsAnonymousType) != 0) {
-				insertNewLine = this.preferences.insert_new_line_in_empty_anonymous_type_declaration;
+				insertNewLine = this.legacyInsertNewLineInEmptyAnonTypeDeclaration();
 			} else if (TypeDeclaration.kind(typeDeclaration.modifiers) == TypeDeclaration.ANNOTATION_TYPE_DECL) {
-				insertNewLine = this.preferences.insert_new_line_in_empty_annotation_declaration;
+				insertNewLine = this.legacyInsertNewLineInEmptyAnnotationDeclaration();
 			} else {
-				insertNewLine = this.preferences.insert_new_line_in_empty_type_declaration;
+				insertNewLine = this.legacyInsertNewLineInEmptyTypeDeclaration();
 			}
 		}
 
@@ -3704,7 +3704,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 					this.scribe.unIndent();
 				}
 			} else {
-				if (this.preferences.insert_new_line_in_empty_method_body) {
+				if (this.legacyInsertNewLineInEmptyMethodBody()) {
 					this.scribe.printNewLine();
 				}
 				if (this.preferences.indent_statements_compare_to_body) {
@@ -3873,7 +3873,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 				this.scribe.unIndent();
 			}
 
-			if (this.preferences.insert_new_line_in_empty_enum_constant) {
+			if (this.legacyInsertNewLineInEmptyEnumConstant()) {
 				this.scribe.printNewLine();
 			}
 			this.scribe.printNextToken(TerminalTokens.TokenNameRBRACE);
@@ -4687,7 +4687,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 					this.scribe.unIndent();
 				}
 			} else {
-				if (this.preferences.insert_new_line_in_empty_method_body) {
+				if (this.legacyInsertNewLineInEmptyMethodBody()) {
 					this.scribe.printNewLine();
 				}
 				if (this.preferences.indent_statements_compare_to_body) {
@@ -6069,5 +6069,75 @@ public class CodeFormatterVisitor extends ASTVisitor {
 				}
 		}
 		return false;
+	}
+
+	/*
+	 * ------------------------- *
+	 * Legacy conversion methods *
+	 * --------------------------*
+	 */
+
+	/**
+	 * @return insert_new_line_in_empty_annotation_declaration
+	 */
+	private boolean legacyInsertNewLineInEmptyAnnotationDeclaration() {
+		return shouldInsertNewLineIfEmpty(this.preferences.keep_annotation_declaration_on_one_line);
+	}
+
+	/**
+	 * @return insert_new_line_in_empty_enum_declaration
+	 */
+	private boolean legacyInsertNewLineInEmptyEnumDeclaration() {
+		return shouldInsertNewLineIfEmpty(this.preferences.keep_enum_declaration_on_one_line);
+	}
+
+	/**
+	 * @return insert_new_line_in_empty_enum_constant
+	 */
+	private boolean legacyInsertNewLineInEmptyEnumConstant() {
+		return shouldInsertNewLineIfEmpty(this.preferences.keep_enum_constant_declaration_on_one_line);
+	}
+
+	/**
+	 * @return insert_new_line_in_empty_anonymous_type_declaration
+	 */
+	private boolean legacyInsertNewLineInEmptyAnonTypeDeclaration() {
+		return shouldInsertNewLineIfEmpty(this.preferences.keep_anonymous_type_declaration_on_one_line);
+	}
+
+	/**
+	 * @return insert_new_line_in_empty_method_body
+	 */
+	private boolean legacyInsertNewLineInEmptyMethodBody() {
+		return shouldInsertNewLineIfEmpty(this.preferences.keep_method_body_on_one_line);
+	}
+
+	/**
+	 * @return insert_new_line_in_empty_type_declaration
+	 */
+	private boolean legacyInsertNewLineInEmptyTypeDeclaration() {
+		return shouldInsertNewLineIfEmpty(this.preferences.keep_type_declaration_on_one_line);
+	}
+
+	/**
+	 * In the modern formatter, this has been broken into two settings; if
+	 * either has been toggled, then this should be false.
+	 *
+	 * @return insert_new_line_in_empty_block
+	 */
+	private boolean legacyInsertNewLineInEmptyBlock() {
+		return shouldInsertNewLineIfEmpty(this.preferences.keep_code_block_on_one_line) && shouldInsertNewLineIfEmpty(this.preferences.keep_lambda_body_block_on_one_line);
+	}
+
+	/**
+	 * Checks the setting against the expected values; this returns a boolean
+	 * in line with the modern formatter.
+	 *
+	 * @param oneLineSetting
+	 * @return
+	 */
+	private static boolean shouldInsertNewLineIfEmpty(final String oneLineSetting) {
+		// If not set in the legacy, the default would be false.
+		return (oneLineSetting == null) ? false : !DefaultCodeFormatterConstants.ONE_LINE_IF_EMPTY.equals(oneLineSetting);
 	}
 }

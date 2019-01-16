@@ -30,7 +30,7 @@ import org.eclipse.jdt.internal.core.util.Util;
  *
  * @since 3.1
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "restriction" })
 public class CommentFormatterUtil {
 
 	/**

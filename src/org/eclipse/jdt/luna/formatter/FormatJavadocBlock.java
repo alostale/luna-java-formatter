@@ -22,6 +22,7 @@ import org.eclipse.jdt.luna.formatter.comment.IJavaDocTagConstants;
  * but at least one of them is.
  * </p>
  */
+@SuppressWarnings("restriction")
 public class FormatJavadocBlock extends FormatJavadocNode implements IJavaDocTagConstants {
 	// flags
 	final static int INLINED = 0x0001;

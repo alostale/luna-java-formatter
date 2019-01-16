@@ -14,3 +14,8 @@ Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/0
 ## Build
 1. Import as Eclipse project
 2. Build jar: `File > Export... > Deployable plug-ins fragments`
+
+## Version Notes
+
+* For Eclipse Mars (4.5) to 2018-09: Please use version 1.1.5 of this plugin.
+* For Ecplise 2018-12 and newer: Please use the latest version (1.1.6) of this plugin.

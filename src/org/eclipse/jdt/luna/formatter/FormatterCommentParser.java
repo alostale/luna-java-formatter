@@ -24,6 +24,7 @@ import org.eclipse.jdt.luna.formatter.comment.IJavaDocTagConstants;
 /**
  * Internal parser used for formatting javadoc comments.
  */
+@SuppressWarnings({ "restriction" })
 public class FormatterCommentParser extends JavadocParser implements IJavaDocTagConstants {
 	char[][] htmlTags;
 	int htmlTagsPtr = -1;
@@ -91,7 +92,7 @@ protected Object createFieldReference(Object receiver) throws InvalidInputExcept
 /* (non-Javadoc)
  * @see org.eclipse.jdt.internal.compiler.parser.JavadocParser#createMethodReference(java.lang.Object, java.util.List)
  */
-protected Object createMethodReference(Object receiver, List arguments) throws InvalidInputException {
+protected Object createMethodReference(Object receiver, @SuppressWarnings("rawtypes") List arguments) throws InvalidInputException {
 	int start = receiver == null ? this.memberStart : ((FormatJavadocReference) receiver).sourceStart;
 	int lineStart = this.scanner.getLineNumber(start);
 	return new FormatJavadocReference(start, this.scanner.getCurrentTokenEndPosition(), lineStart);

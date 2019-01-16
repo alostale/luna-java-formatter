@@ -19,6 +19,7 @@ import org.eclipse.jdt.internal.compiler.parser.JavadocTagConstants;
  * source.
  * </p>
  */
+@SuppressWarnings("restriction")
 public abstract class FormatJavadocNode implements JavadocTagConstants {
 
 	// default size used for array
