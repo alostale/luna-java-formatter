@@ -23,6 +23,7 @@ import org.eclipse.jdt.internal.compiler.parser.ScannerHelper;
  * a potential substitution. The substitution may eat more characters than
  * only the one passed into the computation routine.
  */
+@SuppressWarnings("restriction")
 public abstract class SubstitutionTextReader extends Reader {
 
 	private Reader fReader;

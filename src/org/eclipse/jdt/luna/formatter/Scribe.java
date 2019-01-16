@@ -58,7 +58,7 @@ import org.eclipse.text.edits.TextEdit;
  * 
  * @since 2.1
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
 public class Scribe implements IJavaDocTagConstants {
 
 	private static final int INITIAL_SIZE = 100;

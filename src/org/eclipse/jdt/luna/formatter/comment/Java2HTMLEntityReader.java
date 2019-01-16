@@ -25,7 +25,7 @@ import org.eclipse.jdt.internal.compiler.parser.*;
  *
  * @since 3.0
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes", "unchecked", "restriction"})
 public class Java2HTMLEntityReader extends SubstitutionTextReader {
 
 	private static final int BEGIN_LINE = 0x01;
@@ -62,7 +62,7 @@ public class Java2HTMLEntityReader extends SubstitutionTextReader {
 	/*
 	 * @see org.eclipse.jdt.internal.ui.text.SubstitutionTextReader#computeSubstitution(int)
 	 */
-	protected String computeSubstitution(int c) throws IOException {
+    protected String computeSubstitution(int c) throws IOException {
 		StringBuffer buf = new StringBuffer();
 		// Accumulate *s into the buffer until we see something other than *.
 		while (c == '*') {

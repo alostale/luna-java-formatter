@@ -25,7 +25,7 @@ import org.eclipse.jdt.internal.compiler.parser.ScannerHelper;
  *
  * @since 3.0
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
 public class HTMLEntity2JavaReader extends SubstitutionTextReader {
 
 	/** The hard-coded entity map. */
