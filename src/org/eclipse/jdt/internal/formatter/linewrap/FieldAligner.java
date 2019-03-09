@@ -63,7 +63,7 @@ public class FieldAligner {
 		}
 	}
 
-	private final List<List<FieldDeclaration>> fieldAlignGroups = new ArrayList<>();
+	private final List<List<FieldDeclaration>> fieldAlignGroups = new ArrayList<List<FieldDeclaration>>();
 
 	private final DefaultCodeFormatterOptions options;
 
@@ -77,13 +77,13 @@ public class FieldAligner {
 	public void handleAlign(List<FieldDeclaration> bodyDeclarations) {
 		if (!this.options.align_type_members_on_columns)
 			return;
-		ArrayList<FieldDeclaration> alignGroup = new ArrayList<>();
+		ArrayList<FieldDeclaration> alignGroup = new ArrayList<FieldDeclaration>();
 		BodyDeclaration previous = null;
 		for (BodyDeclaration declaration : bodyDeclarations) {
 			if (declaration instanceof FieldDeclaration) {
 				if (isNewGroup(declaration, previous)) {
 					alignFields(alignGroup);
-					alignGroup = new ArrayList<>();
+					alignGroup = new ArrayList<FieldDeclaration>();
 				}
 				alignGroup.add((FieldDeclaration) declaration);
 			}

@@ -745,21 +745,29 @@ public class LineBreaksPreparator extends ASTVisitor {
 			this.tm.get(lastIndex + 1).unindent();
 	}
 
+	/**
+	 * This enum is a quick and dirty way to make the switch statement Java 1.6 compatible. Otherwise the following compile error occurs:
+	 * "Cannot switch on a value of type String for source level below 1.7. Only convertible int values or enum variables are permitted"
+	 */
+    private	enum DefaultCodeFormatterConstantsEnum {
+    	common_lines, separate_lines_if_wrapped, separate_lines_if_not_empty, separate_lines, preserve_positions;
+	}
+
 	private void handleParenthesesPositions(int openingParenIndex, int closingParenIndex, String positionsSetting) {
-		switch (positionsSetting) {
-			case DefaultCodeFormatterConstants.COMMON_LINES:
+		switch (DefaultCodeFormatterConstantsEnum.valueOf(positionsSetting)) {
+			case common_lines:
 				// nothing to do
 				break;
-			case DefaultCodeFormatterConstants.SEPARATE_LINES_IF_WRAPPED:
+			case separate_lines_if_wrapped:
 				this.tm.get(openingParenIndex).setSeparateLinesOnWrapUntil(this.tm.get(closingParenIndex));
 				break;
-			case DefaultCodeFormatterConstants.SEPARATE_LINES_IF_NOT_EMPTY:
+			case separate_lines_if_not_empty:
 				boolean isEmpty = openingParenIndex + 1 == closingParenIndex;
 				if (isEmpty)
 					break;
 				//$FALL-THROUGH$
-			case DefaultCodeFormatterConstants.SEPARATE_LINES:
-			case DefaultCodeFormatterConstants.PRESERVE_POSITIONS:
+			case separate_lines:
+			case preserve_positions:
 				boolean always = !positionsSetting.equals(DefaultCodeFormatterConstants.PRESERVE_POSITIONS);
 				Token afterOpening = this.tm.get(openingParenIndex + 1);
 				if (always || this.tm.countLineBreaksBetween(this.tm.get(openingParenIndex), afterOpening) > 0) {
