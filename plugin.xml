@@ -9,5 +9,13 @@
             name="Old Luna Java Formatter">
       </javaFormatter>
    </extension>
+   <extension
+         point="org.eclipse.jdt.core.javaFormatter">
+      <javaFormatter
+            class="org.eclipse.jdt.neon.formatter.DefaultCodeFormatter"
+            id="NeonJavaFormatter.javaFormatter"
+            name="Neon Java Formatter">
+      </javaFormatter>
+   </extension>
 
 </plugin>
