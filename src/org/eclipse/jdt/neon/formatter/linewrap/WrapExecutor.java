@@ -10,7 +10,7 @@
  *     Mateusz Matela <mateusz.matela@gmail.com> - [formatter] follow up bug for comments - https://bugs.eclipse.org/458208
  *     Mateusz Matela <mateusz.matela@gmail.com> - NPE in WrapExecutor during Java text formatting  - https://bugs.eclipse.org/465669
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter.linewrap;
+package org.eclipse.jdt.neon.formatter.linewrap;
 
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_BLOCK;
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_JAVADOC;
@@ -22,12 +22,14 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.jdt.internal.compiler.parser.ScannerHelper;
-import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
-import org.eclipse.jdt.internal.formatter.Token;
-import org.eclipse.jdt.internal.formatter.TokenManager;
-import org.eclipse.jdt.internal.formatter.TokenTraverser;
-import org.eclipse.jdt.internal.formatter.Token.WrapMode;
-import org.eclipse.jdt.internal.formatter.Token.WrapPolicy;
+import org.eclipse.jdt.neon.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.neon.formatter.Token;
+import org.eclipse.jdt.neon.formatter.TokenManager;
+import org.eclipse.jdt.neon.formatter.TokenTraverser;
+import org.eclipse.jdt.neon.formatter.Token.WrapMode;
+import org.eclipse.jdt.neon.formatter.Token.WrapPolicy;
+import org.eclipse.jdt.neon.formatter.linewrap.CommentWrapExecutor;
+import org.eclipse.jdt.neon.formatter.linewrap.WrapExecutor;
 
 public class WrapExecutor {
 

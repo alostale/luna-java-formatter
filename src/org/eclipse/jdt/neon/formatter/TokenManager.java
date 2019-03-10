@@ -8,7 +8,7 @@
  * Contributors:
  *     Mateusz Matela <mateusz.matela@gmail.com> - [formatter] Formatter does not format Java code correctly, especially when max line width is set - https://bugs.eclipse.org/303519
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter;
+package org.eclipse.jdt.neon.formatter;
 
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_BLOCK;
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_JAVADOC;
@@ -29,8 +29,12 @@ import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.IfStatement;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.ThrowStatement;
-import org.eclipse.jdt.internal.formatter.Token.WrapMode;
-import org.eclipse.jdt.internal.formatter.linewrap.CommentWrapExecutor;
+import org.eclipse.jdt.neon.formatter.Token.WrapMode;
+import org.eclipse.jdt.neon.formatter.linewrap.CommentWrapExecutor;
+import org.eclipse.jdt.neon.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.neon.formatter.Token;
+import org.eclipse.jdt.neon.formatter.TokenManager;
+import org.eclipse.jdt.neon.formatter.TokenTraverser;
 
 /**
  * A helper class that can be used to easily access source code and find tokens on any position.

@@ -10,7 +10,7 @@
  *     Mateusz Matela <mateusz.matela@gmail.com> - [formatter] IndexOutOfBoundsException in TokenManager - https://bugs.eclipse.org/462945
  *     Mateusz Matela <mateusz.matela@gmail.com> - [formatter] follow up bug for comments - https://bugs.eclipse.org/458208
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter;
+package org.eclipse.jdt.neon.formatter;
 
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameAT;
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOLON;
@@ -76,8 +76,11 @@ import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.jdt.internal.formatter.Token.WrapMode;
-import org.eclipse.jdt.internal.formatter.Token.WrapPolicy;
+import org.eclipse.jdt.neon.formatter.Token.WrapMode;
+import org.eclipse.jdt.neon.formatter.Token.WrapPolicy;
+import org.eclipse.jdt.neon.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.neon.formatter.Token;
+import org.eclipse.jdt.neon.formatter.TokenManager;
 
 public class LineBreaksPreparator extends ASTVisitor {
 	final private TokenManager tm;

@@ -10,7 +10,7 @@
  *     Mateusz Matela <mateusz.matela@gmail.com> - [formatter] IndexOutOfBoundsException in TokenManager - https://bugs.eclipse.org/462945
  *     Mateusz Matela <mateusz.matela@gmail.com> - [formatter] follow up bug for comments - https://bugs.eclipse.org/458208
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter;
+package org.eclipse.jdt.neon.formatter;
 
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.*;
 
@@ -87,6 +87,11 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.WildcardType;
 import org.eclipse.jdt.internal.compiler.parser.ScannerHelper;
+import org.eclipse.jdt.neon.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.neon.formatter.SpacePreparator;
+import org.eclipse.jdt.neon.formatter.Token;
+import org.eclipse.jdt.neon.formatter.TokenManager;
+import org.eclipse.jdt.neon.formatter.TokenTraverser;
 
 public class SpacePreparator extends ASTVisitor {
 	TokenManager tm;

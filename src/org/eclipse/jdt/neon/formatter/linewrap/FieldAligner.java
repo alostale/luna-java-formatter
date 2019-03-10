@@ -10,7 +10,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Contributions for
  *     						Bug 473178
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter.linewrap;
+package org.eclipse.jdt.neon.formatter.linewrap;
 
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_BLOCK;
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_LINE;
@@ -24,10 +24,10 @@ import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
-import org.eclipse.jdt.internal.formatter.Token;
-import org.eclipse.jdt.internal.formatter.TokenManager;
-import org.eclipse.jdt.internal.formatter.TokenTraverser;
+import org.eclipse.jdt.neon.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.neon.formatter.Token;
+import org.eclipse.jdt.neon.formatter.TokenManager;
+import org.eclipse.jdt.neon.formatter.TokenTraverser;
 
 /** Implementation of the "Align fields on columns" feature */
 public class FieldAligner {

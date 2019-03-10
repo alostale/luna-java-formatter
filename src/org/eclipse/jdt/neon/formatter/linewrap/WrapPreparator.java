@@ -9,7 +9,7 @@
  *     Mateusz Matela <mateusz.matela@gmail.com> - [formatter] Formatter does not format Java code correctly, especially when max line width is set - https://bugs.eclipse.org/303519
  *     Mateusz Matela <mateusz.matela@gmail.com> - [formatter] follow up bug for comments - https://bugs.eclipse.org/458208
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter.linewrap;
+package org.eclipse.jdt.neon.formatter.linewrap;
 
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOLON;
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMA;
@@ -87,13 +87,16 @@ import org.eclipse.jdt.core.dom.VariableDeclaration;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
-import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
-import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions.Alignment;
-import org.eclipse.jdt.internal.formatter.Token;
-import org.eclipse.jdt.internal.formatter.Token.WrapMode;
-import org.eclipse.jdt.internal.formatter.Token.WrapPolicy;
-import org.eclipse.jdt.internal.formatter.TokenManager;
-import org.eclipse.jdt.internal.formatter.TokenTraverser;
+import org.eclipse.jdt.neon.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.neon.formatter.DefaultCodeFormatterOptions.Alignment;
+import org.eclipse.jdt.neon.formatter.Token;
+import org.eclipse.jdt.neon.formatter.Token.WrapMode;
+import org.eclipse.jdt.neon.formatter.Token.WrapPolicy;
+import org.eclipse.jdt.neon.formatter.TokenManager;
+import org.eclipse.jdt.neon.formatter.TokenTraverser;
+import org.eclipse.jdt.neon.formatter.linewrap.CommentWrapExecutor;
+import org.eclipse.jdt.neon.formatter.linewrap.WrapExecutor;
+import org.eclipse.jdt.neon.formatter.linewrap.WrapPreparator;
 import org.eclipse.jface.text.IRegion;
 
 public class WrapPreparator extends ASTVisitor {

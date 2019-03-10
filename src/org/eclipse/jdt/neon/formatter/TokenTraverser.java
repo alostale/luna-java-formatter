@@ -8,9 +8,11 @@
  * Contributors:
  *     Mateusz Matela <mateusz.matela@gmail.com> - [formatter] Formatter does not format Java code correctly, especially when max line width is set - https://bugs.eclipse.org/303519
  *******************************************************************************/
-package org.eclipse.jdt.internal.formatter;
+package org.eclipse.jdt.neon.formatter;
 
 import java.util.List;
+
+import org.eclipse.jdt.neon.formatter.Token;
 
 /**
  * Helper class that can be subclassed every time an algorithm needs to swipe through all or part of the tokens and
