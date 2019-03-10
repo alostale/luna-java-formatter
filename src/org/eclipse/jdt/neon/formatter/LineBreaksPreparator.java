@@ -78,7 +78,7 @@ import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.jdt.neon.formatter.Token.WrapMode;
 import org.eclipse.jdt.neon.formatter.Token.WrapPolicy;
-import org.eclipse.jdt.neon.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.neon.formatter.Token;
 import org.eclipse.jdt.neon.formatter.TokenManager;
 
@@ -148,7 +148,7 @@ public class LineBreaksPreparator extends ASTVisitor {
 
 		handleBracedCode(node, node.getName(), this.options.brace_position_for_type_declaration,
 				this.options.indent_body_declarations_compare_to_type_header,
-				this.options.insert_new_line_in_empty_type_declaration);
+				this.legacyInsertNewLineInEmptyTypeDeclaration());
 
 		this.declarationModifierVisited = false;
 		return true;
@@ -201,7 +201,7 @@ public class LineBreaksPreparator extends ASTVisitor {
 	public boolean visit(EnumDeclaration node) {
 		handleBracedCode(node, node.getName(), this.options.brace_position_for_enum_declaration,
 				this.options.indent_body_declarations_compare_to_enum_declaration_header,
-				this.options.insert_new_line_in_empty_enum_declaration);
+				this.legacyInsertNewLineInEmptyEnumDeclaration());
 		handleBodyDeclarations(node.bodyDeclarations());
 
 		List<EnumConstantDeclaration> enumConstants = node.enumConstants();
@@ -234,7 +234,7 @@ public class LineBreaksPreparator extends ASTVisitor {
 	public boolean visit(AnnotationTypeDeclaration node) {
 		handleBracedCode(node, node.getName(), this.options.brace_position_for_annotation_type_declaration,
 				this.options.indent_body_declarations_compare_to_annotation_declaration_header,
-				this.options.insert_new_line_in_empty_annotation_declaration);
+				this.legacyInsertNewLineInEmptyAnnotationDeclaration());
 
 		handleBodyDeclarations(node.bodyDeclarations());
 		if (node.getModifiers() == 0)
@@ -249,11 +249,11 @@ public class LineBreaksPreparator extends ASTVisitor {
 		if (node.getParent() instanceof EnumConstantDeclaration) {
 			handleBracedCode(node, null, this.options.brace_position_for_enum_constant,
 					this.options.indent_body_declarations_compare_to_enum_constant_header,
-					this.options.insert_new_line_in_empty_enum_constant);
+					this.legacyInsertNewLineInEmptyEnumConstant());
 		} else {
 			handleBracedCode(node, null, this.options.brace_position_for_anonymous_type_declaration,
 					this.options.indent_body_declarations_compare_to_type_header,
-					this.options.insert_new_line_in_empty_anonymous_type_declaration);
+					this.legacyInsertNewLineInEmptyAnonTypeDeclaration());
 		}
 		handleBodyDeclarations(node.bodyDeclarations());
 		return true;
@@ -274,11 +274,11 @@ public class LineBreaksPreparator extends ASTVisitor {
 		if (node.isConstructor()) {
 			handleBracedCode(node.getBody(), null, this.options.brace_position_for_constructor_declaration,
 					this.options.indent_statements_compare_to_body,
-					this.options.insert_new_line_in_empty_method_body);
+					this.legacyInsertNewLineInEmptyMethodBody());
 		} else {
 			handleBracedCode(node.getBody(), null, this.options.brace_position_for_method_declaration,
 					this.options.indent_statements_compare_to_body,
-					this.options.insert_new_line_in_empty_method_body);
+					this.legacyInsertNewLineInEmptyMethodBody());
 			Token openBrace = this.tm.firstTokenIn(node.getBody(), TokenNameLBRACE);
 			if (openBrace.getLineBreaksAfter() > 0) // if not, these are empty braces
 				openBrace.putLineBreaksAfter(this.options.blank_lines_at_beginning_of_method_body + 1);
@@ -314,7 +314,7 @@ public class LineBreaksPreparator extends ASTVisitor {
 			bracePosition = this.options.brace_position_for_lambda_body;
 		}
 		handleBracedCode(node, null, bracePosition, this.options.indent_statements_compare_to_block,
-				this.options.insert_new_line_in_empty_block);
+				this.legacyInsertNewLineInEmptyBlock());
 
 		return true;
 	}
@@ -798,4 +798,75 @@ public class LineBreaksPreparator extends ASTVisitor {
 			token.setIndent(currentIndent * this.options.indentation_size);
 		}
 	}
+	
+	/*
+	 * ------------------------- *
+	 * Legacy conversion methods *
+	 * --------------------------*
+	 */
+
+	/**
+	 * @return insert_new_line_in_empty_annotation_declaration
+	 */
+	private boolean legacyInsertNewLineInEmptyAnnotationDeclaration() {
+		return shouldInsertNewLineIfEmpty(this.options.keep_annotation_declaration_on_one_line);
+	}
+
+	/**
+	 * @return insert_new_line_in_empty_enum_declaration
+	 */
+	private boolean legacyInsertNewLineInEmptyEnumDeclaration() {
+		return shouldInsertNewLineIfEmpty(this.options.keep_enum_declaration_on_one_line);
+	}
+
+	/**
+	 * @return insert_new_line_in_empty_enum_constant
+	 */
+	private boolean legacyInsertNewLineInEmptyEnumConstant() {
+		return shouldInsertNewLineIfEmpty(this.options.keep_enum_constant_declaration_on_one_line);
+	}
+
+	/**
+	 * @return insert_new_line_in_empty_anonymous_type_declaration
+	 */
+	private boolean legacyInsertNewLineInEmptyAnonTypeDeclaration() {
+		return shouldInsertNewLineIfEmpty(this.options.keep_anonymous_type_declaration_on_one_line);
+	}
+
+	/**
+	 * @return insert_new_line_in_empty_method_body
+	 */
+	private boolean legacyInsertNewLineInEmptyMethodBody() {
+		return shouldInsertNewLineIfEmpty(this.options.keep_method_body_on_one_line);
+	}
+
+	/**
+	 * @return insert_new_line_in_empty_type_declaration
+	 */
+	private boolean legacyInsertNewLineInEmptyTypeDeclaration() {
+		return shouldInsertNewLineIfEmpty(this.options.keep_type_declaration_on_one_line);
+	}
+
+	/**
+	 * In the modern formatter, this has been broken into two settings; if
+	 * either has been toggled, then this should be false.
+	 *
+	 * @return insert_new_line_in_empty_block
+	 */
+	private boolean legacyInsertNewLineInEmptyBlock() {
+		return shouldInsertNewLineIfEmpty(this.options.keep_code_block_on_one_line) && shouldInsertNewLineIfEmpty(this.options.keep_lambda_body_block_on_one_line);
+	}
+
+	/**
+	 * Checks the setting against the expected values; this returns a boolean
+	 * in line with the modern formatter.
+	 *
+	 * @param oneLineSetting
+	 * @return
+	 */
+	private static boolean shouldInsertNewLineIfEmpty(final String oneLineSetting) {
+		// If not set in the legacy, the default would be false.
+		return (oneLineSetting == null) ? false : !DefaultCodeFormatterConstants.ONE_LINE_IF_EMPTY.equals(oneLineSetting);
+	}
+	
 }

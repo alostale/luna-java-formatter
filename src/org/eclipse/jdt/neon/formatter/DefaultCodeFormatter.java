@@ -45,7 +45,7 @@ import org.eclipse.jdt.internal.compiler.util.Util;
 import org.eclipse.jdt.neon.formatter.linewrap.CommentWrapExecutor;
 import org.eclipse.jdt.neon.formatter.linewrap.WrapPreparator;
 import org.eclipse.jdt.neon.formatter.CommentsPreparator;
-import org.eclipse.jdt.neon.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.neon.formatter.LineBreaksPreparator;
 import org.eclipse.jdt.neon.formatter.SpacePreparator;
 import org.eclipse.jdt.neon.formatter.TextEditsBuilder;

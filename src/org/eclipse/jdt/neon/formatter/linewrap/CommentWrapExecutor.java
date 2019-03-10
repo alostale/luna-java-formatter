@@ -21,7 +21,7 @@ import static org.eclipse.jdt.neon.formatter.CommentsPreparator.COMMENT_LINE_SEP
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.neon.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.neon.formatter.Token;
 import org.eclipse.jdt.neon.formatter.TokenManager;
 import org.eclipse.jdt.neon.formatter.TokenTraverser;
