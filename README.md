@@ -1,8 +1,10 @@
-# Eclipse Luna Java Formatter plugin
+# Eclipse Luna and Neon Java Formatter plugin
 
-Ports Eclipse Luna (4.4) Java formatter as a plugin to be used in newer Eclipse versions.
+Ports Eclipse Luna (4.4) or Eclipse Neon (4.6) Java formatter as a plugin to be used in newer Eclipse versions.
 
 Starting from Eclipse Mars (4.5) Java formatter was rewritten not being possible to format using old style, this can be problematic for projects using old formatting.
+
+Starting from Eclipse Oxygen (4.7) Java formatter was rewritten again and not being possible to format using old style.
 
 Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/06/eclipse-mars-how-to-switch-back-to.html).
 
@@ -17,5 +19,6 @@ Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/0
 
 ## Version Notes
 
+* The Neon formatter only works with Eclipse 2018-12 and newer
 * For Eclipse Mars (4.5) to 2018-09: Please use version 1.1.5 of this plugin.
-* For Ecplise 2018-12 and newer: Please use the latest version (1.1.6) of this plugin.
+* For Ecplise 2018-12 and newer: Please use the latest version (1.2.0) of this plugin.
