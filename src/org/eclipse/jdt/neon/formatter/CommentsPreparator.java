@@ -51,6 +51,7 @@ import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.neon.formatter.Token;
 import org.eclipse.jdt.neon.formatter.TokenManager;
 
+@SuppressWarnings("restriction")
 public class CommentsPreparator extends ASTVisitor {
 
 	public static final int COMMENT_LINE_SEPARATOR_LENGTH = 3;

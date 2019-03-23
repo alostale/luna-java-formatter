@@ -24,6 +24,7 @@ import org.eclipse.jdt.neon.formatter.Token;
 /**
  * Stores a token's type, position and all its properties like surrounding whitespace, wrapping behavior and so on.
  */
+@SuppressWarnings("restriction")
 public class Token {
 
 	public static enum WrapMode {

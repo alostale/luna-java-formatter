@@ -40,6 +40,7 @@ import org.eclipse.jdt.neon.formatter.TokenTraverser;
  * A helper class that can be used to easily access source code and find tokens on any position.
  * It also has some other methods that are useful on multiple stages of formatting.
  */
+@SuppressWarnings("restriction")
 public class TokenManager implements Iterable<Token> {
 
 	private static final Pattern COMMENT_LINE_ANNOTATION_PATTERN = Pattern.compile("^(\\s*\\*?\\s*)(@)"); //$NON-NLS-1$
@@ -346,7 +347,7 @@ public class TokenManager implements Iterable<Token> {
 	/**
 	 * Calculates the length of a source code fragment.
 	 * @param originalStart the first position of the source code fragment
-	 * @param originalEnd the last position of the source code fragment 
+	 * @param originalEnd the last position of the source code fragment
 	 * @param startPosition position in line of the first character (affects tabs calculation)
 	 * @return length, considering tabs and escaping characters as HTML entities
 	 */

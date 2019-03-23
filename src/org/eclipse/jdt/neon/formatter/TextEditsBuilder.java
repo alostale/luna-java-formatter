@@ -37,6 +37,7 @@ import org.eclipse.text.edits.TextEdit;
 /**
  * Creates the formatter's result TextEdit by scanning through the tokens and comparing them with the original source.
  */
+@SuppressWarnings("restriction")
 public class TextEditsBuilder extends TokenTraverser {
 
 	private final String source;

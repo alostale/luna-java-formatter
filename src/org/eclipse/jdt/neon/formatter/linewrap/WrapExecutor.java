@@ -31,6 +31,7 @@ import org.eclipse.jdt.neon.formatter.Token.WrapPolicy;
 import org.eclipse.jdt.neon.formatter.linewrap.CommentWrapExecutor;
 import org.eclipse.jdt.neon.formatter.linewrap.WrapExecutor;
 
+@SuppressWarnings("restriction")
 public class WrapExecutor {
 
 	private static class WrapInfo {
@@ -411,7 +412,7 @@ public class WrapExecutor {
 
 	/**
 	 * The main algorithm that looks for optimal places to wrap.
-	 * Calls itself recursively to get results for wrapped sub-lines.  
+	 * Calls itself recursively to get results for wrapped sub-lines.
 	 */
 	private WrapResult findWraps(int wrapTokenIndex, int indent) throws WrapRestartThrowable {
 		final int lastIndex = this.lineAnalyzer.analyzeLine(wrapTokenIndex, indent);

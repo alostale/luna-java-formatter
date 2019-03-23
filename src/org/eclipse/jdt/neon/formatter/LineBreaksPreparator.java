@@ -82,6 +82,7 @@ import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.neon.formatter.Token;
 import org.eclipse.jdt.neon.formatter.TokenManager;
 
+@SuppressWarnings({ "restriction", "unchecked" })
 public class LineBreaksPreparator extends ASTVisitor {
 	final private TokenManager tm;
 	final private DefaultCodeFormatterOptions options;
@@ -344,7 +345,7 @@ public class LineBreaksPreparator extends ASTVisitor {
 				nonBreakStatementEnd = isBreaking ? -1 : this.tm.lastIndexIn(statement, -1);
 			}
 			if (nonBreakStatementEnd >= 0) {
-				// indent comments between last statement and closing brace 
+				// indent comments between last statement and closing brace
 				this.tm.get(nonBreakStatementEnd + 1).indent();
 				this.tm.lastTokenIn(node, TokenNameRBRACE).unindent();
 			}
@@ -486,7 +487,7 @@ public class LineBreaksPreparator extends ASTVisitor {
 		int lParen = this.tm.firstIndexAfter(node.getName(), -1);
 		while (this.tm.get(lParen).isComment())
 			lParen++;
-		if (this.tm.get(lParen).tokenType == TokenNameLPAREN) {	
+		if (this.tm.get(lParen).tokenType == TokenNameLPAREN) {
 			int rParen = node.getAnonymousClassDeclaration() == null ? this.tm.lastIndexIn(node, TokenNameRPAREN)
 					: this.tm.firstIndexBefore(node.getAnonymousClassDeclaration(), TokenNameRPAREN);
 			handleParenthesesPositions(lParen, rParen, this.options.parenthesis_positions_in_enum_constant_declaration);
@@ -798,7 +799,7 @@ public class LineBreaksPreparator extends ASTVisitor {
 			token.setIndent(currentIndent * this.options.indentation_size);
 		}
 	}
-	
+
 	/*
 	 * ------------------------- *
 	 * Legacy conversion methods *
@@ -868,5 +869,5 @@ public class LineBreaksPreparator extends ASTVisitor {
 		// If not set in the legacy, the default would be false.
 		return (oneLineSetting == null) ? false : !DefaultCodeFormatterConstants.ONE_LINE_IF_EMPTY.equals(oneLineSetting);
 	}
-	
+
 }

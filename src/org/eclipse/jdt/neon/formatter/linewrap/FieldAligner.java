@@ -30,6 +30,7 @@ import org.eclipse.jdt.neon.formatter.TokenManager;
 import org.eclipse.jdt.neon.formatter.TokenTraverser;
 
 /** Implementation of the "Align fields on columns" feature */
+@SuppressWarnings("restriction")
 public class FieldAligner {
 	private class PositionCounter extends TokenTraverser {
 		int stoppingIndex;
@@ -108,6 +109,7 @@ public class FieldAligner {
 		return lineBreaks > this.options.align_fields_grouping_blank_lines;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void alignFields(ArrayList<FieldDeclaration> alignGroup) {
 		if (alignGroup.size() < 2)
 			return;

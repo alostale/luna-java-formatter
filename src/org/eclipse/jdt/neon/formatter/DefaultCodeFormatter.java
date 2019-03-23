@@ -56,6 +56,7 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.TextEdit;
 
+@SuppressWarnings({ "restriction", "unchecked", "deprecation" })
 public class DefaultCodeFormatter extends CodeFormatter {
 
 	/**

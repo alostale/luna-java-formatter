@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Ray V. (voidstar@gmail.com) - Contribution for bug 282988
@@ -55,7 +55,7 @@ import org.eclipse.text.edits.TextEdit;
 
 /**
  * This class is responsible for dumping formatted source
- * 
+ *
  * @since 2.1
  */
 @SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
@@ -280,7 +280,7 @@ public class Scribe implements IJavaDocTagConstants {
 
 	/*
 	 * Adapt edits to regions.
-	 * 
+	 *
 	 * @see "https://bugs.eclipse.org/bugs/show_bug.cgi?id=234583" for more details
 	 */
 	private void adaptEdits() {
@@ -332,7 +332,7 @@ public class Scribe implements IJavaDocTagConstants {
 	 * Search whether a region overlap edit(s) at its start and/or at its end. If
 	 * so, modify the concerned edits to keep only the modifications which are
 	 * inside the given region.
-	 * 
+	 *
 	 * The edit modification is done as follow: 1) start it from the region start if
 	 * it overlaps the region's start 2) end it at the region end if it overlaps the
 	 * region's end 3) remove from the replacement string the number of lines which
@@ -887,7 +887,7 @@ public class Scribe implements IJavaDocTagConstants {
 
 	/**
 	 * Answer actual indentation level based on true column position
-	 * 
+	 *
 	 * @return int
 	 */
 	public int getColumnIndentationLevel() {
@@ -925,9 +925,9 @@ public class Scribe implements IJavaDocTagConstants {
 	 * the search from the given start index.
 	 *
 	 * @param start The start index for the research
-	 * 
+	 *
 	 * @param position The position
-	 * 
+	 *
 	 * @return The index of the comment if the given position is located inside it,
 	 * -1 otherwise
 	 */

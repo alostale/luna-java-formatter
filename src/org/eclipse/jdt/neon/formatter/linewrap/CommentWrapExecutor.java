@@ -28,6 +28,7 @@ import org.eclipse.jdt.neon.formatter.TokenTraverser;
 import org.eclipse.jdt.neon.formatter.Token.WrapMode;
 import org.eclipse.jdt.neon.formatter.Token.WrapPolicy;
 
+@SuppressWarnings("restriction")
 public class CommentWrapExecutor extends TokenTraverser {
 
 	private final TokenManager tm;

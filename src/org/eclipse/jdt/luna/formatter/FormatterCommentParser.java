@@ -273,7 +273,7 @@ protected boolean parseHtmlTag(int previousPosition, int endTextPosition) throws
 	    	default:
     			return false;
 	    }
-	    
+
 	    // Looking for tag closing
 	    switch (readTokenAndConsume()) {
 	    	case TerminalTokens.TokenNameLESS:

@@ -26,7 +26,7 @@ import org.eclipse.text.edits.TextEdit;
  * It will return the formatted string.</ul>
  * @deprecated
 */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
 public class CodeFormatter implements TerminalTokens, org.eclipse.jdt.core.ICodeFormatter {
 
 	private Map options;
