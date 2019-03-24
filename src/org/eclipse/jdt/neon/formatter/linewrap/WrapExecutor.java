@@ -111,8 +111,8 @@ public class WrapExecutor {
 		int firstPotentialWrap;
 		int extraLines;
 		boolean lineExceeded;
-		final List<Integer> extraLinesPerComment = new ArrayList<Integer>();
-		final List<Integer> topPriorityGroupStarts = new ArrayList<Integer>();
+		final List<Integer> extraLinesPerComment = new ArrayList<>();
+		final List<Integer> topPriorityGroupStarts = new ArrayList<>();
 		private int currentTopPriorityGroupEnd;
 		private boolean isNLSTagInLine;
 
@@ -187,7 +187,7 @@ public class WrapExecutor {
 	}
 
 	private class NLSTagHandler extends TokenTraverser {
-		private final ArrayList<Token> nlsTags = new ArrayList<Token>();
+		private final ArrayList<Token> nlsTags = new ArrayList<>();
 
 		public NLSTagHandler() {
 			// nothing to do
@@ -218,7 +218,7 @@ public class WrapExecutor {
 				if (structure == null) {
 					if (this.nlsTags.isEmpty())
 						return true;
-					structure = new ArrayList<Token>();
+					structure = new ArrayList<>();
 					structure.add(lineComment);
 					lineComment.setInternalStructure(structure);
 				}
@@ -279,8 +279,8 @@ public class WrapExecutor {
 
 	private final static int[] EMPTY_ARRAY = {};
 
-	private final HashMap<WrapInfo, WrapResult> wrapSearchResults = new HashMap<WrapInfo, WrapResult>();
-	private final HashSet<WrapPolicy> usedTopPriorityWraps = new HashSet<WrapPolicy>();
+	private final HashMap<WrapInfo, WrapResult> wrapSearchResults = new HashMap<>();
+	private final HashSet<WrapPolicy> usedTopPriorityWraps = new HashSet<>();
 
 	private final LineAnalyzer lineAnalyzer;
 

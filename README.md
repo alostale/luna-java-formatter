@@ -22,4 +22,4 @@ Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/0
 * The Neon formatter only works with Eclipse 2018-12 and newer
 * For Eclipse Mars (4.5) to 2018-09: Please use version 1.1.5 of this plugin.
 * For Eclipse 2018-12: Please use version 1.2.0 of this plugin.
-* For Eclipse 2019-03: Please use version 1.3.0 of this plugin.
+* For Eclipse 2019-03: Please use version 1.3.1 of this plugin.

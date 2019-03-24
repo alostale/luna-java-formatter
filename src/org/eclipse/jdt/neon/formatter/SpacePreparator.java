@@ -86,8 +86,10 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.WildcardType;
+import org.eclipse.jdt.internal.compiler.ast.OperatorIds;
 import org.eclipse.jdt.internal.compiler.parser.ScannerHelper;
 import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.legacy.formatter.LegacyBinaryOperatorFormatOption;
 import org.eclipse.jdt.legacy.formatter.LegacyFormatterOptions;
 import org.eclipse.jdt.neon.formatter.SpacePreparator;
 import org.eclipse.jdt.neon.formatter.Token;
@@ -704,13 +706,17 @@ public class SpacePreparator extends ASTVisitor {
 
 	@Override
 	public boolean visit(InfixExpression node) {
-		String operator = node.getOperator().toString();
-		handleOperator(operator, node.getRightOperand(), this.legacy.insertSpaceBeforeBinaryOperator(),
-				this.legacy.insertSpaceAfterBinaryOperator());
+		final InfixExpression.Operator opObject = node.getOperator();
+		final String operator = opObject.toString();
+
+		final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(opObject);
+
+		handleOperator(operator, node.getRightOperand(), binopt.insertSpaceBeforeBinaryOperator(),
+				binopt.insertSpaceAfterBinaryOperator());
 		List<Expression> extendedOperands = node.extendedOperands();
 		for (Expression operand : extendedOperands) {
-			handleOperator(operator, operand, this.legacy.insertSpaceBeforeBinaryOperator(),
-					this.legacy.insertSpaceAfterBinaryOperator());
+			handleOperator(operator, operand, binopt.insertSpaceBeforeBinaryOperator(),
+					binopt.insertSpaceAfterBinaryOperator());
 		}
 		return true;
 	}
@@ -775,9 +781,12 @@ public class SpacePreparator extends ASTVisitor {
 	@Override
 	public boolean visit(IntersectionType node) {
 		List<Type> types = node.types();
+
+		final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(OperatorIds.AND);
+
 		for (int i = 1; i < types.size(); i++)
-			handleTokenBefore(types.get(i), TokenNameAND, this.legacy.insertSpaceBeforeBinaryOperator(),
-					this.legacy.insertSpaceAfterBinaryOperator());
+			handleTokenBefore(types.get(i), TokenNameAND, binopt.insertSpaceBeforeBinaryOperator(),
+					binopt.insertSpaceAfterBinaryOperator());
 		return true;
 	}
 
@@ -903,9 +912,12 @@ public class SpacePreparator extends ASTVisitor {
 	@Override
 	public boolean visit(UnionType node) {
 		List<Type> types = node.types();
+
+		final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(OperatorIds.OR);
+
 		for (int i = 1; i < types.size(); i++)
-			handleTokenBefore(types.get(i), TokenNameOR, this.legacy.insertSpaceBeforeBinaryOperator(),
-					this.legacy.insertSpaceAfterBinaryOperator());
+			handleTokenBefore(types.get(i), TokenNameOR, binopt.insertSpaceBeforeBinaryOperator(),
+					binopt.insertSpaceAfterBinaryOperator());
 		return true;
 	}
 

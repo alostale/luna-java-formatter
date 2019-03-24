@@ -87,7 +87,7 @@ public class DefaultCodeFormatter extends CodeFormatter {
 	private IRegion[] formatRegions;
 
 	private ASTNode astRoot;
-	private List<Token> tokens = new ArrayList<Token>();
+	private List<Token> tokens = new ArrayList<>();
 	private TokenManager tokenManager;
 
 	public DefaultCodeFormatter() {

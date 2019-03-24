@@ -34,7 +34,7 @@ public class CommentWrapExecutor extends TokenTraverser {
 	private final TokenManager tm;
 	private final DefaultCodeFormatterOptions options;
 
-	private final ArrayList<Token> nlsTags = new ArrayList<Token>();
+	private final ArrayList<Token> nlsTags = new ArrayList<>();
 
 	private int lineStartPosition;
 	private List<Token> blockStructure;

@@ -415,7 +415,7 @@ public class TokenManager implements Iterable<Token> {
 
 	public void addNLSAlignIndex(int index, int align) {
 		if (this.tokenIndexToNLSAlign == null)
-			this.tokenIndexToNLSAlign = new HashMap<Integer, Integer>();
+			this.tokenIndexToNLSAlign = new HashMap<>();
 		this.tokenIndexToNLSAlign.put(index, align);
 	}
 
@@ -436,7 +436,7 @@ public class TokenManager implements Iterable<Token> {
 
 	public void addDisableFormatTokenPair(Token formatOffTag, Token formatOnTag) {
 		if (this.formatOffTagPairs == null)
-			this.formatOffTagPairs = new ArrayList<Token[]>();
+			this.formatOffTagPairs = new ArrayList<>();
 		this.formatOffTagPairs.add(new Token[] { formatOffTag, formatOnTag });
 	}
 

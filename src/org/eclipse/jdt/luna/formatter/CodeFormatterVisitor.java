@@ -128,6 +128,7 @@ import org.eclipse.jdt.internal.compiler.parser.Scanner;
 import org.eclipse.jdt.internal.compiler.parser.TerminalTokens;
 import org.eclipse.jdt.internal.core.util.CodeSnippetParsingUtil;
 import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.legacy.formatter.LegacyBinaryOperatorFormatOption;
 import org.eclipse.jdt.legacy.formatter.LegacyFormatterOptions;
 import org.eclipse.jdt.luna.formatter.align.Alignment;
 import org.eclipse.jdt.luna.formatter.align.AlignmentException;
@@ -457,13 +458,15 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			this.expressionsPos <<= 2;
 		}
 		try {
+			final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(operator);
+
 			this.lastBinaryExpressionAlignmentBreakIndentation = 0;
 			if ((builder.realFragmentsSize() > 1 || fragmentsSize > 4) && numberOfParens == 0) {
 				int scribeLine = this.scribe.line;
 				this.scribe.printComment();
 				Alignment binaryExpressionAlignment = this.scribe.createAlignment(
 						Alignment.BINARY_EXPRESSION,
-						this.legacy.alignmentForBinaryExpression(),
+						binopt.alignmentForBinaryExpression(),
 						Alignment.R_OUTERMOST,
 						fragmentsSize,
 						this.scribe.scanner.currentPosition);
@@ -483,11 +486,11 @@ public class CodeFormatterVisitor extends ASTVisitor {
 								// hence we need to use the break indentation level before printing next token...
 								this.scribe.indentationLevel = binaryExpressionAlignment.breakIndentationLevel;
 							}
-							if (this.legacy.wrapBeforeBinaryOperator()) {
+							if (binopt.wrapBeforeBinaryOperator()) {
 								this.scribe.alignFragment(binaryExpressionAlignment, i);
-								this.scribe.printNextToken(operators[i], this.legacy.insertSpaceBeforeBinaryOperator());
+								this.scribe.printNextToken(operators[i], binopt.insertSpaceBeforeBinaryOperator());
 							} else {
-								this.scribe.printNextToken(operators[i], this.legacy.insertSpaceBeforeBinaryOperator());
+								this.scribe.printNextToken(operators[i], binopt.insertSpaceBeforeBinaryOperator());
 								this.scribe.alignFragment(binaryExpressionAlignment, i);
 							}
 							switch(operators[i]) {
@@ -505,7 +508,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 										this.scribe.space();
 									}
 							}
-							if (this.legacy.insertSpaceAfterBinaryOperator()) {
+							if (binopt.insertSpaceAfterBinaryOperator()) {
 								this.scribe.space();
 							}
 						}
@@ -528,12 +531,12 @@ public class CodeFormatterVisitor extends ASTVisitor {
 				binaryExpression.left.traverse(this, scope);
 				this.expressionsPos &= ~EXPRESSIONS_POS_MASK;
 				this.expressionsPos |= EXPRESSIONS_POS_BETWEEN_TWO;
-				this.scribe.printNextToken(operator, this.legacy.insertSpaceBeforeBinaryOperator(), Scribe.PRESERVE_EMPTY_LINES_IN_BINARY_EXPRESSION);
+				this.scribe.printNextToken(operator, binopt.insertSpaceBeforeBinaryOperator(), Scribe.PRESERVE_EMPTY_LINES_IN_BINARY_EXPRESSION);
 				if (operator == TerminalTokens.TokenNameMINUS && isNextToken(TerminalTokens.TokenNameMINUS)) {
 					// the next character is a minus (unary operator)
 					this.scribe.space();
 				}
-				if (this.legacy.insertSpaceAfterBinaryOperator()) {
+				if (binopt.insertSpaceAfterBinaryOperator()) {
 					this.scribe.space();
 				}
 				binaryExpression.right.traverse(this, scope);
@@ -569,10 +572,12 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			this.expressionsPos <<= 2;
 		}
 		try {
+			final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(operator);
+
 			this.expressionsPos |= EXPRESSIONS_POS_ENTER_EQUALITY;
 			binaryExpression.left.traverse(this, scope);
-			this.scribe.printNextToken(operator, this.legacy.insertSpaceBeforeBinaryOperator(), Scribe.PRESERVE_EMPTY_LINES_IN_EQUALITY_EXPRESSION);
-			if (this.legacy.insertSpaceAfterBinaryOperator()) {
+			this.scribe.printNextToken(operator, binopt.insertSpaceBeforeBinaryOperator(), Scribe.PRESERVE_EMPTY_LINES_IN_EQUALITY_EXPRESSION);
+			if (binopt.insertSpaceAfterBinaryOperator()) {
 				this.scribe.space();
 			}
 			binaryExpression.right.traverse(this, scope);
@@ -2790,10 +2795,12 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		TypeReference argumentType = argument.type;
 		if (argumentType != null) {
 			if (argumentType instanceof UnionTypeReference) {
+				final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(OperatorIds.OR);
+
 				formatMultiCatchArguments(
 						argument,
-						this.legacy.insertSpaceBeforeBinaryOperator(),
-						this.legacy.insertSpaceAfterBinaryOperator(),
+						binopt.insertSpaceBeforeBinaryOperator(),
+						binopt.insertSpaceAfterBinaryOperator(),
 						this.preferences.alignment_for_union_type_in_multicatch,
 						scope);
 			} else {
@@ -4313,8 +4320,10 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			intersectionCastTypeReference.typeReferences[i].traverse(this, scope);
 			if (i != length - 1) {
 				// Borrowing the formatting option from binary operators
-				this.scribe.printNextToken(TerminalTokens.TokenNameAND, this.legacy.insertSpaceBeforeBinaryOperator());
-				if (this.legacy.insertSpaceAfterBinaryOperator()) {
+				final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(OperatorIds.AND);
+
+				this.scribe.printNextToken(TerminalTokens.TokenNameAND, binopt.insertSpaceBeforeBinaryOperator());
+				if (binopt.insertSpaceAfterBinaryOperator()) {
 					this.scribe.space();
 				}
 			}
@@ -5392,9 +5401,12 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		this.scribe.printComment(Scribe.PRESERVE_EMPTY_LINES_IN_STRING_LITERAL_CONCATENATION);
 		ASTNode[] fragments = stringLiteral.literals;
 		int fragmentsSize = stringLiteral.counter;
+
+		final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForStringConcat();
+
 		Alignment binaryExpressionAlignment = this.scribe.createAlignment(
 				Alignment.STRING_CONCATENATION,
-				this.legacy.alignmentForBinaryExpression(),
+				binopt.alignmentForBinaryExpression(),
 				Alignment.R_OUTERMOST,
 				fragmentsSize,
 				this.scribe.scanner.currentPosition);
@@ -5411,8 +5423,9 @@ public class CodeFormatterVisitor extends ASTVisitor {
 						this.scribe.indentationLevel = binaryExpressionAlignment.breakIndentationLevel;
 					}
 					this.scribe.alignFragment(binaryExpressionAlignment, i);
-					this.scribe.printNextToken(TerminalTokens.TokenNamePLUS, this.legacy.insertSpaceBeforeBinaryOperator());
-					if (this.legacy.insertSpaceAfterBinaryOperator()) {
+
+					this.scribe.printNextToken(TerminalTokens.TokenNamePLUS, binopt.insertSpaceBeforeBinaryOperator());
+					if (binopt.insertSpaceAfterBinaryOperator()) {
 						this.scribe.space();
 					}
 				}
