@@ -86,20 +86,26 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.dom.WildcardType;
+import org.eclipse.jdt.internal.compiler.ast.OperatorIds;
 import org.eclipse.jdt.internal.compiler.parser.ScannerHelper;
 import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.legacy.formatter.LegacyBinaryOperatorFormatOption;
+import org.eclipse.jdt.legacy.formatter.LegacyFormatterOptions;
 import org.eclipse.jdt.neon.formatter.SpacePreparator;
 import org.eclipse.jdt.neon.formatter.Token;
 import org.eclipse.jdt.neon.formatter.TokenManager;
 import org.eclipse.jdt.neon.formatter.TokenTraverser;
 
+@SuppressWarnings({ "restriction", "unchecked" })
 public class SpacePreparator extends ASTVisitor {
 	TokenManager tm;
-	private DefaultCodeFormatterOptions options;
+	private final DefaultCodeFormatterOptions options;
+	private final LegacyFormatterOptions legacy;
 
 	public SpacePreparator(TokenManager tokenManager, DefaultCodeFormatterOptions options) {
 		this.tm = tokenManager;
 		this.options = options;
+		this.legacy = new LegacyFormatterOptions(options);
 	}
 
 	@Override
@@ -168,7 +174,7 @@ public class SpacePreparator extends ASTVisitor {
 			int from = this.tm.firstIndexIn(node.getName(), TokenNameIdentifier) + 1;
 			AnonymousClassDeclaration classDeclaration = node.getAnonymousClassDeclaration();
 			int to = classDeclaration != null ? this.tm.firstIndexBefore(classDeclaration, -1)
-					: this.tm.lastIndexIn(node, -1); 
+					: this.tm.lastIndexIn(node, -1);
 			for (int i = from; i <= to; i++) {
 				if (this.tm.get(i).tokenType == TokenNameLPAREN) {
 					openingParen = this.tm.get(i);
@@ -700,13 +706,17 @@ public class SpacePreparator extends ASTVisitor {
 
 	@Override
 	public boolean visit(InfixExpression node) {
-		String operator = node.getOperator().toString();
-		handleOperator(operator, node.getRightOperand(), this.options.insert_space_before_binary_operator,
-				this.options.insert_space_after_binary_operator);
+		final InfixExpression.Operator opObject = node.getOperator();
+		final String operator = opObject.toString();
+
+		final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(opObject);
+
+		handleOperator(operator, node.getRightOperand(), binopt.insertSpaceBeforeBinaryOperator(),
+				binopt.insertSpaceAfterBinaryOperator());
 		List<Expression> extendedOperands = node.extendedOperands();
 		for (Expression operand : extendedOperands) {
-			handleOperator(operator, operand, this.options.insert_space_before_binary_operator,
-					this.options.insert_space_after_binary_operator);
+			handleOperator(operator, operand, binopt.insertSpaceBeforeBinaryOperator(),
+					binopt.insertSpaceAfterBinaryOperator());
 		}
 		return true;
 	}
@@ -771,9 +781,12 @@ public class SpacePreparator extends ASTVisitor {
 	@Override
 	public boolean visit(IntersectionType node) {
 		List<Type> types = node.types();
+
+		final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(OperatorIds.AND);
+
 		for (int i = 1; i < types.size(); i++)
-			handleTokenBefore(types.get(i), TokenNameAND, this.options.insert_space_before_binary_operator,
-					this.options.insert_space_after_binary_operator);
+			handleTokenBefore(types.get(i), TokenNameAND, binopt.insertSpaceBeforeBinaryOperator(),
+					binopt.insertSpaceAfterBinaryOperator());
 		return true;
 	}
 
@@ -899,9 +912,12 @@ public class SpacePreparator extends ASTVisitor {
 	@Override
 	public boolean visit(UnionType node) {
 		List<Type> types = node.types();
+
+		final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(OperatorIds.OR);
+
 		for (int i = 1; i < types.size(); i++)
-			handleTokenBefore(types.get(i), TokenNameOR, this.options.insert_space_before_binary_operator,
-					this.options.insert_space_after_binary_operator);
+			handleTokenBefore(types.get(i), TokenNameOR, binopt.insertSpaceBeforeBinaryOperator(),
+					binopt.insertSpaceAfterBinaryOperator());
 		return true;
 	}
 

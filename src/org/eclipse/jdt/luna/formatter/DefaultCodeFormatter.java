@@ -504,7 +504,7 @@ public class DefaultCodeFormatter extends CodeFormatter {
 	@Override
 	public void setOptions(Map<String, String> options) {
 		this.options = options;
-		Map<String, String> formatterPrefs = new HashMap<String, String>(options.size());
+		Map<String, String> formatterPrefs = new HashMap<>(options.size());
 		for (String key : options.keySet()) {
 			Object value = options.get(key);
 			if (value instanceof String) {

@@ -37,6 +37,7 @@ import org.eclipse.text.edits.TextEdit;
 /**
  * Creates the formatter's result TextEdit by scanning through the tokens and comparing them with the original source.
  */
+@SuppressWarnings("restriction")
 public class TextEditsBuilder extends TokenTraverser {
 
 	private final String source;
@@ -45,8 +46,8 @@ public class TextEditsBuilder extends TokenTraverser {
 	private final DefaultCodeFormatterOptions options;
 	private final StringBuilder buffer;
 
-	private final List<Token> stringLiteralsInLine = new ArrayList<Token>();
-	private final List<TextEdit> edits = new ArrayList<TextEdit>();
+	private final List<Token> stringLiteralsInLine = new ArrayList<>();
+	private final List<TextEdit> edits = new ArrayList<>();
 
 	private int currentRegion = 0;
 
@@ -83,7 +84,7 @@ public class TextEditsBuilder extends TokenTraverser {
 		if (givenRegions == null)
 			return null;
 		// make sure regions don't begin or end inside multiline comments
-		ArrayList<IRegion> result = new ArrayList<IRegion>();
+		ArrayList<IRegion> result = new ArrayList<>();
 		IRegion previous = null;
 		for (IRegion region : givenRegions) {
 			int start = region.getOffset();

@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak - Contribution for bug 150741
@@ -128,6 +128,8 @@ import org.eclipse.jdt.internal.compiler.parser.Scanner;
 import org.eclipse.jdt.internal.compiler.parser.TerminalTokens;
 import org.eclipse.jdt.internal.core.util.CodeSnippetParsingUtil;
 import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
+import org.eclipse.jdt.legacy.formatter.LegacyBinaryOperatorFormatOption;
+import org.eclipse.jdt.legacy.formatter.LegacyFormatterOptions;
 import org.eclipse.jdt.luna.formatter.align.Alignment;
 import org.eclipse.jdt.luna.formatter.align.AlignmentException;
 import org.eclipse.jface.text.IRegion;
@@ -139,12 +141,12 @@ import org.eclipse.text.edits.TextEdit;
  */
 /*
    <extension
-         id="org.eclipse.jdt.core.newformatter.codeformatter"
-         name="org.eclipse.jdt.core.newformatter.codeformatter"
-         point="org.eclipse.jdt.core.codeFormatter">
-      <codeFormatter
-            class="org.eclipse.jdt.internal.formatter.CodeFormatterVisitor">
-      </codeFormatter>
+	     id="org.eclipse.jdt.core.newformatter.codeformatter"
+	     name="org.eclipse.jdt.core.newformatter.codeformatter"
+	     point="org.eclipse.jdt.core.codeFormatter">
+	  <codeFormatter
+	        class="org.eclipse.jdt.internal.formatter.CodeFormatterVisitor">
+	  </codeFormatter>
    </extension>
 */
 @SuppressWarnings({ "rawtypes", "unchecked", "restriction" })
@@ -186,7 +188,6 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	public int lastLocalDeclarationSourceStart;
 	int lastBinaryExpressionAlignmentBreakIndentation;
 	private Scanner localScanner;
-	public DefaultCodeFormatterOptions preferences;
 	public Scribe scribe;
 
 	// Binary expression positions storage
@@ -200,6 +201,10 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	// Array initializers information
 	int arrayInitializersDepth = -1;
 
+	// Legacy preference adapter; the decorated member must be final.
+	private final LegacyFormatterOptions legacy;
+	final DefaultCodeFormatterOptions preferences;
+
 	public CodeFormatterVisitor(DefaultCodeFormatterOptions preferences, Map<String, String> settings, IRegion[] regions, CodeSnippetParsingUtil codeSnippetParsingUtil, boolean includeComments) {
 		long sourceLevel = settings == null
 			? ClassFileConstants.JDK1_3
@@ -208,6 +213,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 
 		this.preferences = preferences;
 		this.scribe = new Scribe(this, sourceLevel, regions, codeSnippetParsingUtil, includeComments);
+		this.legacy = new LegacyFormatterOptions(preferences);
 	}
 
 	/**
@@ -452,13 +458,15 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			this.expressionsPos <<= 2;
 		}
 		try {
+			final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(operator);
+
 			this.lastBinaryExpressionAlignmentBreakIndentation = 0;
 			if ((builder.realFragmentsSize() > 1 || fragmentsSize > 4) && numberOfParens == 0) {
 				int scribeLine = this.scribe.line;
 				this.scribe.printComment();
 				Alignment binaryExpressionAlignment = this.scribe.createAlignment(
 						Alignment.BINARY_EXPRESSION,
-						this.preferences.alignment_for_binary_expression,
+						binopt.alignmentForBinaryExpression(),
 						Alignment.R_OUTERMOST,
 						fragmentsSize,
 						this.scribe.scanner.currentPosition);
@@ -478,11 +486,11 @@ public class CodeFormatterVisitor extends ASTVisitor {
 								// hence we need to use the break indentation level before printing next token...
 								this.scribe.indentationLevel = binaryExpressionAlignment.breakIndentationLevel;
 							}
-							if (this.preferences.wrap_before_binary_operator) {
+							if (binopt.wrapBeforeBinaryOperator()) {
 								this.scribe.alignFragment(binaryExpressionAlignment, i);
-								this.scribe.printNextToken(operators[i], this.preferences.insert_space_before_binary_operator);
+								this.scribe.printNextToken(operators[i], binopt.insertSpaceBeforeBinaryOperator());
 							} else {
-								this.scribe.printNextToken(operators[i], this.preferences.insert_space_before_binary_operator);
+								this.scribe.printNextToken(operators[i], binopt.insertSpaceBeforeBinaryOperator());
 								this.scribe.alignFragment(binaryExpressionAlignment, i);
 							}
 							switch(operators[i]) {
@@ -500,7 +508,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 										this.scribe.space();
 									}
 							}
-							if (this.preferences.insert_space_after_binary_operator) {
+							if (binopt.insertSpaceAfterBinaryOperator()) {
 								this.scribe.space();
 							}
 						}
@@ -523,12 +531,12 @@ public class CodeFormatterVisitor extends ASTVisitor {
 				binaryExpression.left.traverse(this, scope);
 				this.expressionsPos &= ~EXPRESSIONS_POS_MASK;
 				this.expressionsPos |= EXPRESSIONS_POS_BETWEEN_TWO;
-				this.scribe.printNextToken(operator, this.preferences.insert_space_before_binary_operator, Scribe.PRESERVE_EMPTY_LINES_IN_BINARY_EXPRESSION);
+				this.scribe.printNextToken(operator, binopt.insertSpaceBeforeBinaryOperator(), Scribe.PRESERVE_EMPTY_LINES_IN_BINARY_EXPRESSION);
 				if (operator == TerminalTokens.TokenNameMINUS && isNextToken(TerminalTokens.TokenNameMINUS)) {
 					// the next character is a minus (unary operator)
 					this.scribe.space();
 				}
-				if (this.preferences.insert_space_after_binary_operator) {
+				if (binopt.insertSpaceAfterBinaryOperator()) {
 					this.scribe.space();
 				}
 				binaryExpression.right.traverse(this, scope);
@@ -564,10 +572,12 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			this.expressionsPos <<= 2;
 		}
 		try {
+			final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(operator);
+
 			this.expressionsPos |= EXPRESSIONS_POS_ENTER_EQUALITY;
 			binaryExpression.left.traverse(this, scope);
-			this.scribe.printNextToken(operator, this.preferences.insert_space_before_binary_operator, Scribe.PRESERVE_EMPTY_LINES_IN_EQUALITY_EXPRESSION);
-			if (this.preferences.insert_space_after_binary_operator) {
+			this.scribe.printNextToken(operator, binopt.insertSpaceBeforeBinaryOperator(), Scribe.PRESERVE_EMPTY_LINES_IN_EQUALITY_EXPRESSION);
+			if (binopt.insertSpaceAfterBinaryOperator()) {
 				this.scribe.space();
 			}
 			binaryExpression.right.traverse(this, scope);
@@ -635,7 +645,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		}
 		Alignment memberAlignment = this.scribe.getMemberAlignment();
 
-        this.scribe.printComment();
+	    this.scribe.printComment();
 		this.scribe.printModifiers(fieldDeclaration.annotations, this, ICodeFormatterConstants.ANNOTATION_ON_FIELD);
 		this.scribe.space();
 		/*
@@ -777,7 +787,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		}
 		Alignment fieldAlignment = this.scribe.getMemberAlignment();
 
-        this.scribe.printComment();
+	    this.scribe.printComment();
 		this.scribe.printModifiers(multiFieldDeclaration.annotations, this, ICodeFormatterConstants.ANNOTATION_ON_FIELD);
 		this.scribe.space();
 
@@ -1264,17 +1274,17 @@ public class CodeFormatterVisitor extends ASTVisitor {
 
 		switch(kind) {
 			case TypeDeclaration.ENUM_DECL :
-				if (this.legacyInsertNewLineInEmptyEnumDeclaration()) {
+				if (this.legacy.insertNewLineInEmptyEnumDeclaration()) {
 					this.scribe.printNewLine();
 				}
 				break;
 			case TypeDeclaration.ANNOTATION_TYPE_DECL :
-				if (this.legacyInsertNewLineInEmptyAnnotationDeclaration()) {
+				if (this.legacy.insertNewLineInEmptyAnnotationDeclaration()) {
 					this.scribe.printNewLine();
 				}
 				break;
 			default :
-				if (this.legacyInsertNewLineInEmptyTypeDeclaration()) {
+				if (this.legacy.insertNewLineInEmptyTypeDeclaration()) {
 					this.scribe.printNewLine();
 				}
 		}
@@ -1325,7 +1335,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		formatTypeMembers(typeDeclaration);
 
 		this.scribe.unIndent();
-		if (this.legacyInsertNewLineInEmptyAnonTypeDeclaration()) {
+		if (this.legacy.insertNewLineInEmptyAnonTypeDeclaration()) {
 			this.scribe.printNewLine();
 		}
 		this.scribe.printNextToken(TerminalTokens.TokenNameRBRACE);
@@ -1353,7 +1363,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			if (this.preferences.indent_statements_compare_to_block) {
 				this.scribe.unIndent();
 			}
-		} else if (this.legacyInsertNewLineInEmptyBlock()) {
+		} else if (this.legacy.insertNewLineInEmptyBlock()) {
 			this.scribe.printNewLine();
 			if (this.preferences.indent_statements_compare_to_block) {
 				this.scribe.indent();
@@ -1549,7 +1559,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 										int fragmentIndentation = argumentsAlignment.fragmentIndentations[j];
 										if ((argumentsAlignment.mode & Alignment.M_INDENT_ON_COLUMN) != 0 && fragmentIndentation > 0) {
 											this.scribe.indentationLevel = fragmentIndentation;
-										}	
+										}
 									} else if (this.preferences.insert_space_after_comma_in_method_invocation_arguments) {
 										this.scribe.space();
 									}
@@ -1913,7 +1923,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 					this.scribe.redoAlignment(e);
 				}
 			} while (!ok);
-			
+
 			this.scribe.exitAlignment(resourcesAlignment, true);
 			if (isNextToken(TerminalTokens.TokenNameSEMICOLON)) {
 				// take care of trailing semicolon
@@ -2241,7 +2251,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 							isChunkStart = memberAlignment.checkChunkStart(Alignment.CHUNK_FIELD, i, this.scribe.scanner.currentPosition);
 							if (member instanceof MultiFieldDeclaration) {
 								MultiFieldDeclaration multiField = (MultiFieldDeclaration) member;
-	
+
 								if (multiField.isStatic()) {
 									format(multiField, this, typeDeclaration.staticInitializerScope, isChunkStart, i == 0);
 								} else {
@@ -2325,7 +2335,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 
 		if (!insertNewLine) {
 			if ((typeDeclaration.bits & ASTNode.IsAnonymousType) != 0) {
-				insertNewLine = this.legacyInsertNewLineInEmptyEnumConstant();
+				insertNewLine = this.legacy.insertNewLineInEmptyEnumConstant();
 			}
 		}
 
@@ -2356,13 +2366,13 @@ public class CodeFormatterVisitor extends ASTVisitor {
 
 		if (!insertNewLine) {
 			if (TypeDeclaration.kind(typeDeclaration.modifiers) == TypeDeclaration.ENUM_DECL) {
-				insertNewLine = this.legacyInsertNewLineInEmptyEnumDeclaration();
+				insertNewLine = this.legacy.insertNewLineInEmptyEnumDeclaration();
 			} else if ((typeDeclaration.bits & ASTNode.IsAnonymousType) != 0) {
-				insertNewLine = this.legacyInsertNewLineInEmptyAnonTypeDeclaration();
+				insertNewLine = this.legacy.insertNewLineInEmptyAnonTypeDeclaration();
 			} else if (TypeDeclaration.kind(typeDeclaration.modifiers) == TypeDeclaration.ANNOTATION_TYPE_DECL) {
-				insertNewLine = this.legacyInsertNewLineInEmptyAnnotationDeclaration();
+				insertNewLine = this.legacy.insertNewLineInEmptyAnnotationDeclaration();
 			} else {
-				insertNewLine = this.legacyInsertNewLineInEmptyTypeDeclaration();
+				insertNewLine = this.legacy.insertNewLineInEmptyTypeDeclaration();
 			}
 		}
 
@@ -2428,7 +2438,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 						balance++;
 						break;
 					case TerminalTokens.TokenNameRPAREN:
-						--balance; 
+						--balance;
 						break;
 					default:
 						if (balance <= 0)
@@ -2493,7 +2503,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		}
 		return false;
 	}
-	
+
 	private boolean isNextToken(int tokenName) {
 		this.localScanner.resetTo(this.scribe.scanner.currentPosition, this.scribe.scannerEndPosition - 1);
 		try {
@@ -2619,7 +2629,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		} catch(InvalidInputException e) {
 			// ignore
 		}
-    }
+	}
 
 	/**
 	 * @see org.eclipse.jdt.internal.compiler.ASTVisitor#visit(org.eclipse.jdt.internal.compiler.ast.AllocationExpression, org.eclipse.jdt.internal.compiler.lookup.BlockScope)
@@ -2718,11 +2728,11 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	public boolean visit(
 			AnnotationMethodDeclaration annotationTypeMemberDeclaration,
 			ClassScope scope) {
-        /*
-         * Print comments to get proper line number
-         */
-        this.scribe.printComment();
-        this.scribe.printModifiers(annotationTypeMemberDeclaration.annotations, this, ICodeFormatterConstants.ANNOTATION_ON_METHOD);
+	    /*
+	     * Print comments to get proper line number
+	     */
+	    this.scribe.printComment();
+	    this.scribe.printModifiers(annotationTypeMemberDeclaration.annotations, this, ICodeFormatterConstants.ANNOTATION_ON_METHOD);
 		this.scribe.space();
 		/*
 		 * Print the method return type
@@ -2785,10 +2795,12 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		TypeReference argumentType = argument.type;
 		if (argumentType != null) {
 			if (argumentType instanceof UnionTypeReference) {
+				final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(OperatorIds.OR);
+
 				formatMultiCatchArguments(
-						argument, 
-						this.preferences.insert_space_before_binary_operator, 
-						this.preferences.insert_space_after_binary_operator,
+						argument,
+						binopt.insertSpaceBeforeBinaryOperator(),
+						binopt.insertSpaceAfterBinaryOperator(),
 						this.preferences.alignment_for_union_type_in_multicatch,
 						scope);
 			} else {
@@ -2913,11 +2925,11 @@ public class CodeFormatterVisitor extends ASTVisitor {
 							this.scribe.scanner.currentPosition,
 							this.preferences.continuation_indentation_for_array_initializer,
 							true);
-	
+
 					if (insert_new_line_after_opening_brace) {
 						arrayInitializerAlignment.fragmentIndentations[0] = arrayInitializerAlignment.breakIndentationLevel;
 					}
-	
+
 					this.scribe.enterAlignment(arrayInitializerAlignment);
 					do {
 						try {
@@ -3025,7 +3037,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		} finally {
 			this.arrayInitializersDepth--;
 		}
-		
+
 
 		if (numberOfParens > 0) {
 			manageClosingParenthesizedExpression(arrayInitializer, numberOfParens);
@@ -3415,10 +3427,10 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			int importLength = imports.length;
 			if (importLength != 1) {
 				format(imports[0], false);
-    			for (int i = 1; i < importLength - 1; i++) {
-    				format(imports[i], false);
-    			}
-    			format(imports[importLength - 1], true);
+				for (int i = 1; i < importLength - 1; i++) {
+					format(imports[i], false);
+				}
+				format(imports[importLength - 1], true);
 			} else {
 				format(imports[0], true);
 			}
@@ -3534,56 +3546,56 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	}
 
 	/**
-     * @see org.eclipse.jdt.internal.compiler.ASTVisitor#visit(org.eclipse.jdt.internal.compiler.ast.ConditionalExpression, org.eclipse.jdt.internal.compiler.lookup.BlockScope)
-     */
-    public boolean visit(
-    	ConditionalExpression conditionalExpression,
-    	BlockScope scope) {
+	 * @see org.eclipse.jdt.internal.compiler.ASTVisitor#visit(org.eclipse.jdt.internal.compiler.ast.ConditionalExpression, org.eclipse.jdt.internal.compiler.lookup.BlockScope)
+	 */
+	public boolean visit(
+		ConditionalExpression conditionalExpression,
+		BlockScope scope) {
 
-    	final int numberOfParens = (conditionalExpression.bits & ASTNode.ParenthesizedMASK) >> ASTNode.ParenthesizedSHIFT;
-    	if (numberOfParens > 0) {
-    		manageOpeningParenthesizedExpression(conditionalExpression, numberOfParens);
-    	}
-    	conditionalExpression.condition.traverse(this, scope);
+		final int numberOfParens = (conditionalExpression.bits & ASTNode.ParenthesizedMASK) >> ASTNode.ParenthesizedSHIFT;
+		if (numberOfParens > 0) {
+			manageOpeningParenthesizedExpression(conditionalExpression, numberOfParens);
+		}
+		conditionalExpression.condition.traverse(this, scope);
 
-    	Alignment conditionalExpressionAlignment =this.scribe.createAlignment(
-    			Alignment.CONDITIONAL_EXPRESSION,
-    			this.preferences.alignment_for_conditional_expression,
-    			2,
-    			this.scribe.scanner.currentPosition);
+		Alignment conditionalExpressionAlignment =this.scribe.createAlignment(
+				Alignment.CONDITIONAL_EXPRESSION,
+				this.preferences.alignment_for_conditional_expression,
+				2,
+				this.scribe.scanner.currentPosition);
 
-    	this.scribe.enterAlignment(conditionalExpressionAlignment);
-    	boolean ok = false;
-    	do {
-    		try {
-    			this.scribe.alignFragment(conditionalExpressionAlignment, 0);
-    			this.scribe.printNextToken(TerminalTokens.TokenNameQUESTION, this.preferences.insert_space_before_question_in_conditional);
+		this.scribe.enterAlignment(conditionalExpressionAlignment);
+		boolean ok = false;
+		do {
+			try {
+				this.scribe.alignFragment(conditionalExpressionAlignment, 0);
+				this.scribe.printNextToken(TerminalTokens.TokenNameQUESTION, this.preferences.insert_space_before_question_in_conditional);
 
-    			if (this.preferences.insert_space_after_question_in_conditional) {
-    				this.scribe.space();
-    			}
-    			conditionalExpression.valueIfTrue.traverse(this, scope);
-    			this.scribe.printComment(CodeFormatter.K_UNKNOWN, Scribe.BASIC_TRAILING_COMMENT);
-    			this.scribe.alignFragment(conditionalExpressionAlignment, 1);
-    			this.scribe.printNextToken(TerminalTokens.TokenNameCOLON, this.preferences.insert_space_before_colon_in_conditional);
+				if (this.preferences.insert_space_after_question_in_conditional) {
+					this.scribe.space();
+				}
+				conditionalExpression.valueIfTrue.traverse(this, scope);
+				this.scribe.printComment(CodeFormatter.K_UNKNOWN, Scribe.BASIC_TRAILING_COMMENT);
+				this.scribe.alignFragment(conditionalExpressionAlignment, 1);
+				this.scribe.printNextToken(TerminalTokens.TokenNameCOLON, this.preferences.insert_space_before_colon_in_conditional);
 
-    			if (this.preferences.insert_space_after_colon_in_conditional) {
-    				this.scribe.space();
-    			}
-    			conditionalExpression.valueIfFalse.traverse(this, scope);
+				if (this.preferences.insert_space_after_colon_in_conditional) {
+					this.scribe.space();
+				}
+				conditionalExpression.valueIfFalse.traverse(this, scope);
 
-    			ok = true;
-    		} catch (AlignmentException e) {
-    			this.scribe.redoAlignment(e);
-    		}
-    	} while (!ok);
-    	this.scribe.exitAlignment(conditionalExpressionAlignment, true);
+				ok = true;
+			} catch (AlignmentException e) {
+				this.scribe.redoAlignment(e);
+			}
+		} while (!ok);
+		this.scribe.exitAlignment(conditionalExpressionAlignment, true);
 
-    	if (numberOfParens > 0) {
-    		manageClosingParenthesizedExpression(conditionalExpression, numberOfParens);
-    	}
-    	return false;
-    }
+		if (numberOfParens > 0) {
+			manageClosingParenthesizedExpression(conditionalExpression, numberOfParens);
+		}
+		return false;
+	}
 
 
 	/**
@@ -3614,14 +3626,14 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			}
 			return false;
 		}
-        /*
-         * Print comments to get proper line number
-         */
-        this.scribe.printComment();
-        int line = this.scribe.line;
+	    /*
+	     * Print comments to get proper line number
+	     */
+	    this.scribe.printComment();
+	    int line = this.scribe.line;
 		this.scribe.printModifiers(constructorDeclaration.annotations, this, ICodeFormatterConstants.ANNOTATION_ON_METHOD);
 		if (this.scribe.line > line) {
-        	// annotations introduced new line, but this is not a line wrapping
+	    	// annotations introduced new line, but this is not a line wrapping
 			// see 158267
 			line = this.scribe.line;
 		}
@@ -3704,7 +3716,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 					this.scribe.unIndent();
 				}
 			} else {
-				if (this.legacyInsertNewLineInEmptyMethodBody()) {
+				if (this.legacy.insertNewLineInEmptyMethodBody()) {
 					this.scribe.printNewLine();
 				}
 				if (this.preferences.indent_statements_compare_to_body) {
@@ -3829,12 +3841,12 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	}
 	// field is an enum constant
 	public boolean visit(FieldDeclaration enumConstant, MethodScope scope) {
-        /*
-         * Print comments to get proper line number
-         */
-        this.scribe.printComment();
-        final int line = this.scribe.line;
-        this.scribe.printModifiers(enumConstant.annotations, this, ICodeFormatterConstants.ANNOTATION_ON_FIELD);
+	    /*
+	     * Print comments to get proper line number
+	     */
+	    this.scribe.printComment();
+	    final int line = this.scribe.line;
+	    this.scribe.printModifiers(enumConstant.annotations, this, ICodeFormatterConstants.ANNOTATION_ON_FIELD);
 		this.scribe.printNextToken(TerminalTokens.TokenNameIdentifier, false);
 		formatEnumConstantArguments(
 			enumConstant,
@@ -3873,7 +3885,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 				this.scribe.unIndent();
 			}
 
-			if (this.legacyInsertNewLineInEmptyEnumConstant()) {
+			if (this.legacy.insertNewLineInEmptyEnumConstant()) {
 				this.scribe.printNewLine();
 			}
 			this.scribe.printNextToken(TerminalTokens.TokenNameRBRACE);
@@ -4179,8 +4191,8 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	public boolean visit(IfStatement ifStatement, BlockScope scope) {
 
 		this.scribe.printNextToken(TerminalTokens.TokenNameif);
-        final int line = this.scribe.line;
-        this.scribe.printNextToken(TerminalTokens.TokenNameLPAREN, this.preferences.insert_space_before_opening_paren_in_if);
+	    final int line = this.scribe.line;
+	    this.scribe.printNextToken(TerminalTokens.TokenNameLPAREN, this.preferences.insert_space_before_opening_paren_in_if);
 		if (this.preferences.insert_space_after_opening_paren_in_if) {
 			this.scribe.space();
 		}
@@ -4308,8 +4320,10 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			intersectionCastTypeReference.typeReferences[i].traverse(this, scope);
 			if (i != length - 1) {
 				// Borrowing the formatting option from binary operators
-				this.scribe.printNextToken(TerminalTokens.TokenNameAND, this.preferences.insert_space_before_binary_operator);
-				if (this.preferences.insert_space_after_binary_operator) {
+				final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(OperatorIds.AND);
+
+				this.scribe.printNextToken(TerminalTokens.TokenNameAND, binopt.insertSpaceBeforeBinaryOperator());
+				if (binopt.insertSpaceAfterBinaryOperator()) {
 					this.scribe.space();
 				}
 			}
@@ -4397,7 +4411,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	 * @see org.eclipse.jdt.internal.compiler.ASTVisitor#visit(org.eclipse.jdt.internal.compiler.ast.LambdaExpression, org.eclipse.jdt.internal.compiler.lookup.BlockScope)
 	 */
 	public boolean visit(LambdaExpression lambdaExpression, BlockScope scope) {
-		
+
 		final int numberOfParens = (lambdaExpression.bits & ASTNode.ParenthesizedMASK) >> ASTNode.ParenthesizedSHIFT;
 		if (numberOfParens > 0) {
 			manageOpeningParenthesizedExpression(lambdaExpression, numberOfParens);
@@ -4434,7 +4448,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jdt.internal.compiler.ASTVisitor#visit(org.eclipse.jdt.internal.compiler.ast.LocalDeclaration, org.eclipse.jdt.internal.compiler.lookup.BlockScope)
 	 */
@@ -4627,7 +4641,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 				 * Print the method return type
 				 */
 				final TypeReference returnType = methodDeclaration.returnType;
-		
+
 				if (returnType != null) {
 					returnType.traverse(this, methodDeclarationScope);
 				}
@@ -4687,7 +4701,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 					this.scribe.unIndent();
 				}
 			} else {
-				if (this.legacyInsertNewLineInEmptyMethodBody()) {
+				if (this.legacy.insertNewLineInEmptyMethodBody()) {
 					this.scribe.printNewLine();
 				}
 				if (this.preferences.indent_statements_compare_to_body) {
@@ -5214,7 +5228,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	public boolean visit(org.eclipse.jdt.internal.compiler.ast.ReferenceExpression referenceExpression, BlockScope blockScope) {
 		referenceExpression.lhs.traverse(this, blockScope);
 		this.scribe.printNextToken(TerminalTokens.TokenNameCOLON_COLON);
-		
+
 		TypeReference[] typeArguments = referenceExpression.typeArguments;
 		if (typeArguments != null) {
 				this.scribe.printNextToken(TerminalTokens.TokenNameLESS, this.preferences.insert_space_before_opening_angle_bracket_in_type_arguments);
@@ -5241,7 +5255,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		this.scribe.printNextToken(referenceExpression.isMethodReference() ? TerminalTokens.TokenNameIdentifier : TerminalTokens.TokenNamenew);
 		return false;
 	}
-	
+
 	/**
 	 * @see org.eclipse.jdt.internal.compiler.ASTVisitor#visit(org.eclipse.jdt.internal.compiler.ast.ReturnStatement, org.eclipse.jdt.internal.compiler.lookup.BlockScope)
 	 */
@@ -5387,9 +5401,12 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		this.scribe.printComment(Scribe.PRESERVE_EMPTY_LINES_IN_STRING_LITERAL_CONCATENATION);
 		ASTNode[] fragments = stringLiteral.literals;
 		int fragmentsSize = stringLiteral.counter;
+
+		final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForStringConcat();
+
 		Alignment binaryExpressionAlignment = this.scribe.createAlignment(
 				Alignment.STRING_CONCATENATION,
-				this.preferences.alignment_for_binary_expression,
+				binopt.alignmentForBinaryExpression(),
 				Alignment.R_OUTERMOST,
 				fragmentsSize,
 				this.scribe.scanner.currentPosition);
@@ -5406,8 +5423,9 @@ public class CodeFormatterVisitor extends ASTVisitor {
 						this.scribe.indentationLevel = binaryExpressionAlignment.breakIndentationLevel;
 					}
 					this.scribe.alignFragment(binaryExpressionAlignment, i);
-					this.scribe.printNextToken(TerminalTokens.TokenNamePLUS, this.preferences.insert_space_before_binary_operator);
-					if (this.preferences.insert_space_after_binary_operator) {
+
+					this.scribe.printNextToken(TerminalTokens.TokenNamePLUS, binopt.insertSpaceBeforeBinaryOperator());
+					if (binopt.insertSpaceAfterBinaryOperator()) {
 						this.scribe.space();
 					}
 				}
@@ -5677,8 +5695,8 @@ public class CodeFormatterVisitor extends ASTVisitor {
 
 		this.scribe.printNextToken(TerminalTokens.TokenNametry);
 		formatTryResources(
-				tryStatement, 
-				this.preferences.insert_space_before_opening_paren_in_try, 
+				tryStatement,
+				this.preferences.insert_space_before_opening_paren_in_try,
 				this.preferences.insert_space_before_closing_paren_in_try,
 				this.preferences.insert_space_after_opening_paren_in_try,
 				this.preferences.insert_space_before_semicolon_in_try_resources,
@@ -5771,10 +5789,10 @@ public class CodeFormatterVisitor extends ASTVisitor {
 					this.scribe.redoAlignment(e);
 				}
 			} while (!ok);
-			
+
 			this.scribe.exitAlignment(argumentsAlignment, true);
 		}
-		
+
 	}
 
 	/**
@@ -6069,75 +6087,5 @@ public class CodeFormatterVisitor extends ASTVisitor {
 				}
 		}
 		return false;
-	}
-
-	/*
-	 * ------------------------- *
-	 * Legacy conversion methods *
-	 * --------------------------*
-	 */
-
-	/**
-	 * @return insert_new_line_in_empty_annotation_declaration
-	 */
-	private boolean legacyInsertNewLineInEmptyAnnotationDeclaration() {
-		return shouldInsertNewLineIfEmpty(this.preferences.keep_annotation_declaration_on_one_line);
-	}
-
-	/**
-	 * @return insert_new_line_in_empty_enum_declaration
-	 */
-	private boolean legacyInsertNewLineInEmptyEnumDeclaration() {
-		return shouldInsertNewLineIfEmpty(this.preferences.keep_enum_declaration_on_one_line);
-	}
-
-	/**
-	 * @return insert_new_line_in_empty_enum_constant
-	 */
-	private boolean legacyInsertNewLineInEmptyEnumConstant() {
-		return shouldInsertNewLineIfEmpty(this.preferences.keep_enum_constant_declaration_on_one_line);
-	}
-
-	/**
-	 * @return insert_new_line_in_empty_anonymous_type_declaration
-	 */
-	private boolean legacyInsertNewLineInEmptyAnonTypeDeclaration() {
-		return shouldInsertNewLineIfEmpty(this.preferences.keep_anonymous_type_declaration_on_one_line);
-	}
-
-	/**
-	 * @return insert_new_line_in_empty_method_body
-	 */
-	private boolean legacyInsertNewLineInEmptyMethodBody() {
-		return shouldInsertNewLineIfEmpty(this.preferences.keep_method_body_on_one_line);
-	}
-
-	/**
-	 * @return insert_new_line_in_empty_type_declaration
-	 */
-	private boolean legacyInsertNewLineInEmptyTypeDeclaration() {
-		return shouldInsertNewLineIfEmpty(this.preferences.keep_type_declaration_on_one_line);
-	}
-
-	/**
-	 * In the modern formatter, this has been broken into two settings; if
-	 * either has been toggled, then this should be false.
-	 *
-	 * @return insert_new_line_in_empty_block
-	 */
-	private boolean legacyInsertNewLineInEmptyBlock() {
-		return shouldInsertNewLineIfEmpty(this.preferences.keep_code_block_on_one_line) && shouldInsertNewLineIfEmpty(this.preferences.keep_lambda_body_block_on_one_line);
-	}
-
-	/**
-	 * Checks the setting against the expected values; this returns a boolean
-	 * in line with the modern formatter.
-	 *
-	 * @param oneLineSetting
-	 * @return
-	 */
-	private static boolean shouldInsertNewLineIfEmpty(final String oneLineSetting) {
-		// If not set in the legacy, the default would be false.
-		return (oneLineSetting == null) ? false : !DefaultCodeFormatterConstants.ONE_LINE_IF_EMPTY.equals(oneLineSetting);
 	}
 }

@@ -298,7 +298,7 @@ public class Alignment {
 		}
 		return depth;
 	}
-	
+
 	/**
 	 * Returns whether the alignment can be aligned or not.
 	 * Only used for message send alignment, it currently blocks its alignment
@@ -316,7 +316,7 @@ public class Alignment {
 				case Alignment.ALLOCATION:
 				case Alignment.MESSAGE_ARGUMENTS:
 					// message send inside arguments, avoid to align
-					if (enclosingAlignment.isWrapped() && 
+					if (enclosingAlignment.isWrapped() &&
 							(enclosingAlignment.fragmentIndex > 0 || enclosingAlignment.fragmentCount < 2)) {
 						return !this.blockAlign;
 					}
@@ -450,7 +450,7 @@ public class Alignment {
 		}
 		return false; // cannot split better
 	}
-	
+
 	public boolean isWrapped() {
 		if (this.fragmentCount == 0) return false;
 		return this.fragmentBreaks[this.fragmentIndex] == BREAK;
@@ -518,13 +518,13 @@ public class Alignment {
 	}
 
 	public String toString(StringBuffer buffer, int level) {
-		
+
 		// Compute the indentation at the given level
 		StringBuffer indentation = new StringBuffer();
 		for (int i=0; i<level; i++) {
 			indentation.append('\t');
 		}
-		
+
 		// First line is for class and name
 		buffer.append(indentation);
 		buffer
@@ -535,7 +535,7 @@ public class Alignment {
 			.append("<name: ")	//$NON-NLS-1$
 			.append(this.name)
 			.append(">\n");	//$NON-NLS-1$
-		
+
 		// Line for depth and break indentation
 		buffer.append(indentation);
 		buffer
@@ -574,7 +574,7 @@ public class Alignment {
 		buffer
 			.append(indentation)
 			.append(">\n"); //$NON-NLS-1$
-		
+
 		// Display enclosing
 		if (this.enclosing != null && level >= 0) {
 			buffer
@@ -585,7 +585,7 @@ public class Alignment {
 				.append(indentation)
 				.append(">\n"); //$NON-NLS-1$
 		}
-		
+
 		// Return the result
 		return buffer.toString();
 	}

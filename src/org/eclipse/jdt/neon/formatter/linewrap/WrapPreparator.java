@@ -89,6 +89,8 @@ import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions.Alignment;
+import org.eclipse.jdt.legacy.formatter.LegacyBinaryOperatorFormatOption;
+import org.eclipse.jdt.legacy.formatter.LegacyFormatterOptions;
 import org.eclipse.jdt.neon.formatter.Token;
 import org.eclipse.jdt.neon.formatter.Token.WrapMode;
 import org.eclipse.jdt.neon.formatter.Token.WrapPolicy;
@@ -99,6 +101,7 @@ import org.eclipse.jdt.neon.formatter.linewrap.WrapExecutor;
 import org.eclipse.jdt.neon.formatter.linewrap.WrapPreparator;
 import org.eclipse.jface.text.IRegion;
 
+@SuppressWarnings({ "restriction", "unchecked" })
 public class WrapPreparator extends ASTVisitor {
 
 	/**
@@ -143,7 +146,7 @@ public class WrapPreparator extends ASTVisitor {
 
 	private final static Map<Operator, Integer> OPERATOR_PRECEDENCE;
 	static {
-		HashMap<Operator, Integer> precedence = new HashMap<Operator, Integer>();
+		HashMap<Operator, Integer> precedence = new HashMap<>();
 		precedence.put(Operator.TIMES, 1);
 		precedence.put(Operator.DIVIDE, 1);
 		precedence.put(Operator.REMAINDER, 1);
@@ -175,14 +178,16 @@ public class WrapPreparator extends ASTVisitor {
 	 * temporary values used when calling {@link #handleWrap(int)} to avoid ArrayList initialization and long lists of
 	 * parameters
 	 */
-	private List<Integer> wrapIndexes = new ArrayList<Integer>();
+	private List<Integer> wrapIndexes = new ArrayList<>();
 	/** Indexes for wraps that shouldn't happen but should be indented if cannot be removed */
-	private List<Integer> secondaryWrapIndexes = new ArrayList<Integer>();
-	private List<Float> wrapPenalties = new ArrayList<Float>();
+	private List<Integer> secondaryWrapIndexes = new ArrayList<>();
+	private List<Float> wrapPenalties = new ArrayList<>();
 	private int wrapParentIndex = -1;
 	private int wrapGroupEnd = -1;
 
 	private int currentDepth = 0;
+
+	private final LegacyFormatterOptions legacy;
 
 	public WrapPreparator(TokenManager tokenManager, DefaultCodeFormatterOptions options, int kind) {
 		this.tm = tokenManager;
@@ -190,6 +195,7 @@ public class WrapPreparator extends ASTVisitor {
 		this.kind = kind;
 
 		this.fieldAligner = new FieldAligner(this.tm, this.options);
+		this.legacy = new LegacyFormatterOptions(options);
 	}
 
 	@Override
@@ -495,17 +501,21 @@ public class WrapPreparator extends ASTVisitor {
 
 	@Override
 	public boolean visit(InfixExpression node) {
-		Integer operatorPrecedence = OPERATOR_PRECEDENCE.get(node.getOperator());
+		final InfixExpression.Operator operator = node.getOperator();
+
+		Integer operatorPrecedence = OPERATOR_PRECEDENCE.get(operator);
 		if (operatorPrecedence == null)
 			return true;
 		ASTNode parent = node.getParent();
 		if ((parent instanceof InfixExpression) && samePrecedence(node, (InfixExpression) parent))
 			return true; // this node has been handled higher in the AST
 
+		final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(operator);
+
 		findTokensToWrap(node, 0);
 		this.wrapParentIndex = this.wrapIndexes.remove(0);
 		this.wrapGroupEnd = this.tm.lastIndexIn(node, -1);
-		if ((this.options.alignment_for_binary_expression & Alignment.M_INDENT_ON_COLUMN) != 0
+		if ((binopt.alignmentForBinaryExpression() & Alignment.M_INDENT_ON_COLUMN) != 0
 				&& this.wrapParentIndex > 0)
 			this.wrapParentIndex--;
 		for (int i = this.wrapParentIndex; i >= 0; i--) {
@@ -514,16 +524,20 @@ public class WrapPreparator extends ASTVisitor {
 				break;
 			}
 		}
-		handleWrap(this.options.alignment_for_binary_expression, node);
+		handleWrap(binopt.alignmentForBinaryExpression(), node);
 		return true;
 	}
 
 	private void findTokensToWrap(InfixExpression node, int depth) {
+		final InfixExpression.Operator operator = node.getOperator();
+
+		final LegacyBinaryOperatorFormatOption binopt = this.legacy.getFormatOptionForBinaryOperator(operator);
+
 		Expression left = node.getLeftOperand();
 		if (left instanceof InfixExpression && samePrecedence(node, (InfixExpression) left)) {
 			findTokensToWrap((InfixExpression) left, depth + 1);
 		} else if (this.wrapIndexes.isEmpty() // always add first operand, it will be taken as wrap parent
-				|| !this.options.wrap_before_binary_operator) {
+				|| !binopt.wrapBeforeBinaryOperator()) {
 			this.wrapIndexes.add(this.tm.firstIndexIn(left, -1));
 		}
 
@@ -537,14 +551,14 @@ public class WrapPreparator extends ASTVisitor {
 			int indexBefore = this.tm.firstIndexBefore(operand, -1);
 			while (this.tm.get(indexBefore).isComment())
 				indexBefore--;
-			assert node.getOperator().toString().equals(this.tm.toString(indexBefore));
+			assert operator.toString().equals(this.tm.toString(indexBefore));
 			int indexAfter = this.tm.firstIndexIn(operand, -1);
-			this.wrapIndexes.add(this.options.wrap_before_binary_operator ? indexBefore : indexAfter);
-			this.secondaryWrapIndexes.add(this.options.wrap_before_binary_operator ? indexAfter : indexBefore);
+			this.wrapIndexes.add(binopt.wrapBeforeBinaryOperator() ? indexBefore : indexAfter);
+			this.secondaryWrapIndexes.add(binopt.wrapBeforeBinaryOperator() ? indexAfter : indexBefore);
 
 			if (!this.options.join_wrapped_lines) {
 				// TODO there should be an option for never joining wraps on opposite side of the operator
-				if (this.options.wrap_before_binary_operator) {
+				if (binopt.wrapBeforeBinaryOperator()) {
 					if (this.tm.countLineBreaksBetween(this.tm.get(indexAfter - 1), this.tm.get(indexAfter)) > 0)
 						this.wrapIndexes.add(indexAfter);
 				} else {
@@ -869,8 +883,10 @@ public class WrapPreparator extends ASTVisitor {
 
 		setTokenWrapPolicy(0, policy, true);
 
-		boolean wrapPreceedingComments = !(parentNode instanceof InfixExpression)
-				|| !this.options.wrap_before_binary_operator;
+		final boolean wrapPreceedingComments = !(parentNode instanceof InfixExpression)
+				|| !this.legacy.getFormatOptionForBinaryComposite().wrapBeforeBinaryOperator();
+
+
 		for (int i = 1; i < this.wrapIndexes.size(); i++) {
 			penalty = this.wrapPenalties.size() > i ? this.wrapPenalties.get(i) : 1;
 			if (penalty != policy.penaltyMultiplier || i == 1)

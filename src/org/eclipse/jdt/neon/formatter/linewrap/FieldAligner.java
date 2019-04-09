@@ -30,6 +30,7 @@ import org.eclipse.jdt.neon.formatter.TokenManager;
 import org.eclipse.jdt.neon.formatter.TokenTraverser;
 
 /** Implementation of the "Align fields on columns" feature */
+@SuppressWarnings("restriction")
 public class FieldAligner {
 	private class PositionCounter extends TokenTraverser {
 		int stoppingIndex;
@@ -63,7 +64,7 @@ public class FieldAligner {
 		}
 	}
 
-	private final List<List<FieldDeclaration>> fieldAlignGroups = new ArrayList<List<FieldDeclaration>>();
+	private final List<List<FieldDeclaration>> fieldAlignGroups = new ArrayList<>();
 
 	private final DefaultCodeFormatterOptions options;
 
@@ -77,13 +78,13 @@ public class FieldAligner {
 	public void handleAlign(List<FieldDeclaration> bodyDeclarations) {
 		if (!this.options.align_type_members_on_columns)
 			return;
-		ArrayList<FieldDeclaration> alignGroup = new ArrayList<FieldDeclaration>();
+		ArrayList<FieldDeclaration> alignGroup = new ArrayList<>();
 		BodyDeclaration previous = null;
 		for (BodyDeclaration declaration : bodyDeclarations) {
 			if (declaration instanceof FieldDeclaration) {
 				if (isNewGroup(declaration, previous)) {
 					alignFields(alignGroup);
-					alignGroup = new ArrayList<FieldDeclaration>();
+					alignGroup = new ArrayList<>();
 				}
 				alignGroup.add((FieldDeclaration) declaration);
 			}
@@ -108,6 +109,7 @@ public class FieldAligner {
 		return lineBreaks > this.options.align_fields_grouping_blank_lines;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void alignFields(ArrayList<FieldDeclaration> alignGroup) {
 		if (alignGroup.size() < 2)
 			return;

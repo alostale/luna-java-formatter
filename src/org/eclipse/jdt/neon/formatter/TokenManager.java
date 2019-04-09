@@ -40,6 +40,7 @@ import org.eclipse.jdt.neon.formatter.TokenTraverser;
  * A helper class that can be used to easily access source code and find tokens on any position.
  * It also has some other methods that are useful on multiple stages of formatting.
  */
+@SuppressWarnings("restriction")
 public class TokenManager implements Iterable<Token> {
 
 	private static final Pattern COMMENT_LINE_ANNOTATION_PATTERN = Pattern.compile("^(\\s*\\*?\\s*)(@)"); //$NON-NLS-1$
@@ -346,7 +347,7 @@ public class TokenManager implements Iterable<Token> {
 	/**
 	 * Calculates the length of a source code fragment.
 	 * @param originalStart the first position of the source code fragment
-	 * @param originalEnd the last position of the source code fragment 
+	 * @param originalEnd the last position of the source code fragment
 	 * @param startPosition position in line of the first character (affects tabs calculation)
 	 * @return length, considering tabs and escaping characters as HTML entities
 	 */
@@ -414,7 +415,7 @@ public class TokenManager implements Iterable<Token> {
 
 	public void addNLSAlignIndex(int index, int align) {
 		if (this.tokenIndexToNLSAlign == null)
-			this.tokenIndexToNLSAlign = new HashMap<Integer, Integer>();
+			this.tokenIndexToNLSAlign = new HashMap<>();
 		this.tokenIndexToNLSAlign.put(index, align);
 	}
 
@@ -435,7 +436,7 @@ public class TokenManager implements Iterable<Token> {
 
 	public void addDisableFormatTokenPair(Token formatOffTag, Token formatOnTag) {
 		if (this.formatOffTagPairs == null)
-			this.formatOffTagPairs = new ArrayList<Token[]>();
+			this.formatOffTagPairs = new ArrayList<>();
 		this.formatOffTagPairs.add(new Token[] { formatOffTag, formatOnTag });
 	}
 

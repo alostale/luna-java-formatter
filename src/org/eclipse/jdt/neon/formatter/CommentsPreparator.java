@@ -51,6 +51,7 @@ import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.neon.formatter.Token;
 import org.eclipse.jdt.neon.formatter.TokenManager;
 
+@SuppressWarnings("restriction")
 public class CommentsPreparator extends ASTVisitor {
 
 	public static final int COMMENT_LINE_SEPARATOR_LENGTH = 3;
@@ -224,7 +225,7 @@ public class CommentsPreparator extends ASTVisitor {
 			if (previous.originalEnd + 1 >= commentToken.originalStart)
 				return;
 			if (structure == null || structure.isEmpty()) {
-				structure = new ArrayList<Token>();
+				structure = new ArrayList<>();
 				structure.add(new Token(previous.originalEnd + 1, commentToken.originalEnd, TokenNameCOMMENT_LINE));
 				commentToken.setInternalStructure(structure);
 			} else {
@@ -260,7 +261,7 @@ public class CommentsPreparator extends ASTVisitor {
 		if (stringLiterals.isEmpty())
 			return;
 
-		List<Token> commentFragments = new ArrayList<Token>();
+		List<Token> commentFragments = new ArrayList<>();
 		Matcher matcher = NLS_TAG_PATTERN.matcher(this.tm.toString(comment));
 		int previousMatcherEnd = 0;
 		boolean nlsFound = false;
@@ -314,7 +315,7 @@ public class CommentsPreparator extends ASTVisitor {
 	}
 
 	private List<Token> findStringLiteralsInLine(int lastTokenIndex) {
-		List<Token> stringLiterals = new ArrayList<Token>();
+		List<Token> stringLiterals = new ArrayList<>();
 		Token previous = this.tm.get(lastTokenIndex);
 		for (int i = lastTokenIndex - 1; i >= 0; i--) {
 			Token token = this.tm.get(i);
@@ -333,7 +334,7 @@ public class CommentsPreparator extends ASTVisitor {
 		if (fragments == null) {
 			fragments = Arrays.asList(commentToken);
 		}
-		ArrayList<Token> result = new ArrayList<Token>();
+		ArrayList<Token> result = new ArrayList<>();
 		for (int i = 0; i < fragments.size(); i++) {
 			Token token = fragments.get(i);
 			if (token.hasNLSTag()) {
@@ -456,7 +457,7 @@ public class CommentsPreparator extends ASTVisitor {
 	}
 
 	private List<Token> commentToLines(Token commentToken, int commentStartPositionInLine) {
-		List<Token> lines = new ArrayList<Token>();
+		List<Token> lines = new ArrayList<>();
 
 		int tab = this.options.tab_size;
 		String commentText = this.tm.toString(commentToken);
@@ -940,7 +941,7 @@ public class CommentsPreparator extends ASTVisitor {
 		final boolean cleanBlankLines = isJavadoc ? this.options.comment_clear_blank_lines_in_javadoc_comment
 				: this.options.comment_clear_blank_lines_in_block_comment;
 
-		List<Token> structure = new ArrayList<Token>();
+		List<Token> structure = new ArrayList<>();
 
 		int firstTokenEnd = commentToken.originalStart + 1;
 		while (firstTokenEnd < commentToken.originalEnd - 1 && this.tm.charAt(firstTokenEnd + 1) == '*')
@@ -1199,7 +1200,7 @@ public class CommentsPreparator extends ASTVisitor {
 	private List<Token> translateFormattedTokens(int startPosition, List<Token> formattedTokens, int[] positionMapping,
 			HashMap<Token, Token> translationMap) {
 		int previousLineBreaks = 0;
-		List<Token> result = new ArrayList<Token>();
+		List<Token> result = new ArrayList<>();
 		for (Token token : formattedTokens) {
 			int newStart = Arrays.binarySearch(positionMapping, token.originalStart);
 			while (newStart > 0 && positionMapping[newStart - 1] == token.originalStart)
@@ -1217,7 +1218,7 @@ public class CommentsPreparator extends ASTVisitor {
 			List<Token> structure = token.getInternalStructure();
 			if (structure != null && !structure.isEmpty()) {
 				if (translationMap == null)
-					translationMap = new HashMap<Token, Token>();
+					translationMap = new HashMap<>();
 				translated.setInternalStructure(translateFormattedTokens(startPosition, structure, positionMapping,
 						translationMap));
 			}
