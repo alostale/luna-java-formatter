@@ -23,3 +23,10 @@ Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/0
 * For Eclipse Mars (4.5) to 2018-09: Please use version 1.1.5 of this plugin.
 * For Eclipse 2018-12: Please use version 1.2.0 of this plugin.
 * For Eclipse 2019-03: Please use version 1.3.1 of this plugin.
+* For Eclipse 2019-06: Please use version 1.4.0 of this plugin.
+    * The 1.4.0 version contains no code changes; it contains build setting changes and was built using Eclipse 2019-06.
+    * Before upgrading to this version, consider backing up your formatter settings (via Export).
+    * If, after upgrading eclipse to 2019-06 and this plugin to 1.4.0, the formatter does not work, there is a fix; there seems to be an occassional issue when upgrading that is fixed with the following steps:
+        1. Change to the default Eclipse formatter.
+        2. Change back to the `Old Luna Java Formatter`.
+        3. Re-import your saved settings (select overwrite if prompted).
