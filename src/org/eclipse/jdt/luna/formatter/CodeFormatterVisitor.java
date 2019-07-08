@@ -914,6 +914,8 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		try {
 			compilationUnitDeclaration.traverse(this, compilationUnitDeclaration.scope);
 		} catch(AbortFormatting e){
+			if (DEBUG)
+				e.printStackTrace(System.out);
 			return failedToFormat();
 		}
 		if (DEBUG){
@@ -2117,7 +2119,7 @@ public class CodeFormatterVisitor extends ASTVisitor {
 				this.scribe.printNewLine();
 			}
 			statement.traverse(this, scope);
-			if (statement instanceof Expression) {
+			if (statement instanceof Expression && !(statement instanceof SwitchStatement)) {
 				this.scribe.printNextToken(TerminalTokens.TokenNameSEMICOLON, this.preferences.insert_space_before_semicolon);
 				this.scribe.printComment(CodeFormatter.K_UNKNOWN, Scribe.BASIC_TRAILING_COMMENT);
 				if (i != statementsLength - 1) {
