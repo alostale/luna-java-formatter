@@ -409,7 +409,7 @@ public class DefaultCodeFormatter extends CodeFormatter {
 		if (PROBING_SCANNER == null) {
 			// scanner use to check if the kind could be K_JAVA_DOC, K_MULTI_LINE_COMMENT or K_SINGLE_LINE_COMMENT
 			// do not tokenize white spaces to get single comments even with spaces before...
-			PROBING_SCANNER = new Scanner(true, false/*do not tokenize whitespaces*/, false/*nls*/, ClassFileConstants.JDK1_6, ClassFileConstants.JDK1_6, null/*taskTags*/, null/*taskPriorities*/, true/*taskCaseSensitive*/);
+			PROBING_SCANNER = new Scanner(true, false/*do not tokenize whitespaces*/, false/*nls*/, ClassFileConstants.JDK1_6, ClassFileConstants.JDK1_6, null/*taskTags*/, null/*taskPriorities*/, true/*taskCaseSensitive*/, false/*isPreviewEnabled*/ );
 		}
 		PROBING_SCANNER.setSource(source.toCharArray());
 
