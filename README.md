@@ -25,3 +25,4 @@ Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/0
 * For Eclipse 2019-03: Please use version 1.3.1 of this plugin.
 * For Eclipse 2019-06: Please use version 1.4.1 of this plugin.
     * Please note that this may not work well with the new arrow based switch statements (if at all).
+* For Eclipse 2019-12: Please use version 1.5.0 of this plugin.
