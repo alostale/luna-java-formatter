@@ -17,12 +17,13 @@ Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/0
 1. Import as Eclipse project
 2. Build jar: `File > Export... > Deployable plug-ins fragments`
 
-## Version Notes
+## Version Support Matrix
 
-* The Neon formatter only works with Eclipse 2018-12 and newer
-* For Eclipse Mars (4.5) to 2018-09: Please use version 1.1.5 of this plugin.
-* For Eclipse 2018-12: Please use version 1.2.0 of this plugin.
-* For Eclipse 2019-03: Please use version 1.3.1 of this plugin.
-* For Eclipse 2019-06: Please use version 1.4.1 of this plugin.
-    * Please note that this may not work well with the new arrow based switch statements (if at all).
-* For Eclipse 2019-12 and newer: Please use version 1.5.0 of this plugin.
+| Version | Supported Eclipse Version(s) | Formatters | Notes |
+|:-------:|:-----------------------------|:----------:|:-----:|
+| 1.1.5   | Mars (4.5) - 2018-09         | Luna       | *NA*  |
+| 1.2.0   | 2018-12                      | Luna, Neon | Neon formatter support added.  |
+| 1.3.1   | 2019-03                      | Luna, Neon | *NA*  |
+| 1.4.1   | 2019-06, 2019-09             | Luna, Neon | Arrow based switch statement support may not work well (if at all). |
+| 1.5.0   | 2019-12, 2020-03             | Luna, Neon | *NA*  |
+| 1.6.0   | 2020-06                      | Luna, Neon | No code changes, but rather a rebuild with the 2020-06 toolchain. |
