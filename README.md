@@ -27,3 +27,4 @@ Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/0
 | 1.4.1   | 2019-06, 2019-09             | Luna, Neon | Arrow based switch statement support may not work well (if at all). |
 | 1.5.0   | 2019-12, 2020-03             | Luna, Neon | *NA*  |
 | 1.6.0   | 2020-06                      | Luna, Neon | No code changes, but rather a rebuild with the 2020-06 toolchain. |
+| 1.7.0   | 2020-09                      | Luna, Neon | No code changes, but rather a rebuild with the 2020-09 toolchain. |
