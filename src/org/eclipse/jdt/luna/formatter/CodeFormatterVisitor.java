@@ -3284,14 +3284,18 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	 * @see org.eclipse.jdt.internal.compiler.ASTVisitor#visit(org.eclipse.jdt.internal.compiler.ast.CaseStatement, org.eclipse.jdt.internal.compiler.lookup.BlockScope)
 	 */
 	public boolean visit(CaseStatement caseStatement, BlockScope scope) {
-		if (caseStatement.constantExpression == null) {
+	    final Expression[] cexpr = caseStatement.constantExpressions;
+		if (cexpr == null || cexpr.length == 0) {
 			this.scribe.printNextToken(TerminalTokens.TokenNamedefault);
 			this.scribe.printNextToken(TerminalTokens.TokenNameCOLON, this.preferences.insert_space_before_colon_in_default);
 		} else {
 			this.scribe.printNextToken(TerminalTokens.TokenNamecase);
 			this.scribe.space();
-			caseStatement.constantExpression.traverse(this, scope);
-			this.scribe.printNextToken(TerminalTokens.TokenNameCOLON, this.preferences.insert_space_before_colon_in_case);
+
+			for (int i = 0; i < cexpr.length; ++i) {
+			    cexpr[i].traverse(this, scope);
+			    this.scribe.printNextToken(TerminalTokens.TokenNameCOLON, this.preferences.insert_space_before_colon_in_case);
+			}
 		}
 		return false;
 	}
