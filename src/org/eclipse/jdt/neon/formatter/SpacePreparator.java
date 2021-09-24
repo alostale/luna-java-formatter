@@ -366,11 +366,12 @@ public class SpacePreparator extends ASTVisitor {
         if (node.isDefault()) {
             handleToken(node, TokenNameCOLON, this.options.insert_space_before_colon_in_default, false);
         } else {
-            handleToken(node, TokenNamecase, false, true);
-
             // Null check not required as we checked isDefault() above.
             final List<Expression> expressions = node.expressions();
-            expressions.forEach((x) -> handleToken(x, TokenNameCOLON, this.options.insert_space_before_colon_in_case, false));
+            expressions.forEach((x) -> {
+                handleToken(node, TokenNamecase, false, true);
+                handleToken(x, TokenNameCOLON, this.options.insert_space_before_colon_in_case, false);
+            });
         }
         return true;
     }
