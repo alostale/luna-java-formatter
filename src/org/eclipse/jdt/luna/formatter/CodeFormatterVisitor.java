@@ -3289,10 +3289,9 @@ public class CodeFormatterVisitor extends ASTVisitor {
 			this.scribe.printNextToken(TerminalTokens.TokenNamedefault);
 			this.scribe.printNextToken(TerminalTokens.TokenNameCOLON, this.preferences.insert_space_before_colon_in_default);
 		} else {
-			this.scribe.printNextToken(TerminalTokens.TokenNamecase);
-			this.scribe.space();
-
 			for (int i = 0; i < cexpr.length; ++i) {
+                this.scribe.printNextToken(TerminalTokens.TokenNamecase);
+                this.scribe.space();
 			    cexpr[i].traverse(this, scope);
 			    this.scribe.printNextToken(TerminalTokens.TokenNameCOLON, this.preferences.insert_space_before_colon_in_case);
 			}
