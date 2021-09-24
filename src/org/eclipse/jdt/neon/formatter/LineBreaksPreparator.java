@@ -76,11 +76,9 @@ import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.core.dom.WhileStatement;
 import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.neon.formatter.Token.WrapMode;
 import org.eclipse.jdt.neon.formatter.Token.WrapPolicy;
-import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
-import org.eclipse.jdt.neon.formatter.Token;
-import org.eclipse.jdt.neon.formatter.TokenManager;
 
 @SuppressWarnings({ "restriction", "unchecked" })
 public class LineBreaksPreparator extends ASTVisitor {

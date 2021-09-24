@@ -32,9 +32,7 @@ import org.eclipse.jdt.core.dom.ThrowStatement;
 import org.eclipse.jdt.neon.formatter.Token.WrapMode;
 import org.eclipse.jdt.neon.formatter.linewrap.CommentWrapExecutor;
 import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
-import org.eclipse.jdt.neon.formatter.Token;
 import org.eclipse.jdt.neon.formatter.TokenManager;
-import org.eclipse.jdt.neon.formatter.TokenTraverser;
 
 /**
  * A helper class that can be used to easily access source code and find tokens on any position.

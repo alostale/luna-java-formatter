@@ -233,52 +233,52 @@ public class CodeFormatterVisitor extends ASTVisitor {
 		switch((binaryExpression.bits & ASTNode.OperatorMASK) >> ASTNode.OperatorSHIFT) {
 			case OperatorIds.MULTIPLY :
 				binaryExpression.left.traverse(builder, scope);
-				builder.operatorsList.add(new Integer(TerminalTokens.TokenNameMULTIPLY));
+				builder.operatorsList.add(Integer.valueOf(TerminalTokens.TokenNameMULTIPLY));
 				binaryExpression.right.traverse(builder, scope);
 				break;
 			case OperatorIds.PLUS :
 				binaryExpression.left.traverse(builder, scope);
-				builder.operatorsList.add(new Integer(TerminalTokens.TokenNamePLUS));
+				builder.operatorsList.add(Integer.valueOf(TerminalTokens.TokenNamePLUS));
 				binaryExpression.right.traverse(builder, scope);
 				break;
 			case OperatorIds.DIVIDE :
 				binaryExpression.left.traverse(builder, scope);
-				builder.operatorsList.add(new Integer(TerminalTokens.TokenNameDIVIDE));
+				builder.operatorsList.add(Integer.valueOf(TerminalTokens.TokenNameDIVIDE));
 				binaryExpression.right.traverse(builder, scope);
 				break;
 			case OperatorIds.REMAINDER :
 				binaryExpression.left.traverse(builder, scope);
-				builder.operatorsList.add(new Integer(TerminalTokens.TokenNameREMAINDER));
+				builder.operatorsList.add(Integer.valueOf(TerminalTokens.TokenNameREMAINDER));
 				binaryExpression.right.traverse(builder, scope);
 				break;
 			case OperatorIds.XOR :
 				binaryExpression.left.traverse(builder, scope);
-				builder.operatorsList.add(new Integer(TerminalTokens.TokenNameXOR));
+				builder.operatorsList.add(Integer.valueOf(TerminalTokens.TokenNameXOR));
 				binaryExpression.right.traverse(builder, scope);
 				break;
 			case OperatorIds.MINUS :
 				binaryExpression.left.traverse(builder, scope);
-				builder.operatorsList.add(new Integer(TerminalTokens.TokenNameMINUS));
+				builder.operatorsList.add(Integer.valueOf(TerminalTokens.TokenNameMINUS));
 				binaryExpression.right.traverse(builder, scope);
 				break;
 			case OperatorIds.OR :
 				binaryExpression.left.traverse(builder, scope);
-				builder.operatorsList.add(new Integer(TerminalTokens.TokenNameOR));
+				builder.operatorsList.add(Integer.valueOf(TerminalTokens.TokenNameOR));
 				binaryExpression.right.traverse(builder, scope);
 				break;
 			case OperatorIds.AND :
 				binaryExpression.left.traverse(builder, scope);
-				builder.operatorsList.add(new Integer(TerminalTokens.TokenNameAND));
+				builder.operatorsList.add(Integer.valueOf(TerminalTokens.TokenNameAND));
 				binaryExpression.right.traverse(builder, scope);
 				break;
 			case OperatorIds.AND_AND :
 				binaryExpression.left.traverse(builder, scope);
-				builder.operatorsList.add(new Integer(TerminalTokens.TokenNameAND_AND));
+				builder.operatorsList.add(Integer.valueOf(TerminalTokens.TokenNameAND_AND));
 				binaryExpression.right.traverse(builder, scope);
 				break;
 			case OperatorIds.OR_OR :
 				binaryExpression.left.traverse(builder, scope);
-				builder.operatorsList.add(new Integer(TerminalTokens.TokenNameOR_OR));
+				builder.operatorsList.add(Integer.valueOf(TerminalTokens.TokenNameOR_OR));
 				binaryExpression.right.traverse(builder, scope);
 				break;
 		}
@@ -3284,14 +3284,18 @@ public class CodeFormatterVisitor extends ASTVisitor {
 	 * @see org.eclipse.jdt.internal.compiler.ASTVisitor#visit(org.eclipse.jdt.internal.compiler.ast.CaseStatement, org.eclipse.jdt.internal.compiler.lookup.BlockScope)
 	 */
 	public boolean visit(CaseStatement caseStatement, BlockScope scope) {
-		if (caseStatement.constantExpression == null) {
+	    final Expression[] cexpr = caseStatement.constantExpressions;
+		if (cexpr == null || cexpr.length == 0) {
 			this.scribe.printNextToken(TerminalTokens.TokenNamedefault);
 			this.scribe.printNextToken(TerminalTokens.TokenNameCOLON, this.preferences.insert_space_before_colon_in_default);
 		} else {
 			this.scribe.printNextToken(TerminalTokens.TokenNamecase);
 			this.scribe.space();
-			caseStatement.constantExpression.traverse(this, scope);
-			this.scribe.printNextToken(TerminalTokens.TokenNameCOLON, this.preferences.insert_space_before_colon_in_case);
+
+			for (int i = 0; i < cexpr.length; ++i) {
+			    cexpr[i].traverse(this, scope);
+			    this.scribe.printNextToken(TerminalTokens.TokenNameCOLON, this.preferences.insert_space_before_colon_in_case);
+			}
 		}
 		return false;
 	}

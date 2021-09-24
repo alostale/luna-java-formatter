@@ -44,12 +44,9 @@ import org.eclipse.jdt.core.formatter.CodeFormatter;
 import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.compiler.parser.ScannerHelper;
+import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.neon.formatter.Token.WrapMode;
 import org.eclipse.jdt.neon.formatter.Token.WrapPolicy;
-import org.eclipse.jdt.neon.formatter.DefaultCodeFormatter;
-import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
-import org.eclipse.jdt.neon.formatter.Token;
-import org.eclipse.jdt.neon.formatter.TokenManager;
 
 @SuppressWarnings("restriction")
 public class CommentsPreparator extends ASTVisitor {

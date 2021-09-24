@@ -17,11 +17,11 @@
  *******************************************************************************/
 package org.eclipse.jdt.neon.formatter;
 
+import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_BLOCK;
+import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_JAVADOC;
+import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_LINE;
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameEOF;
 import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameNotAToken;
-import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_JAVADOC;
-import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_BLOCK;
-import static org.eclipse.jdt.internal.compiler.parser.TerminalTokens.TokenNameCOMMENT_LINE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,15 +42,9 @@ import org.eclipse.jdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.jdt.internal.compiler.impl.CompilerOptions;
 import org.eclipse.jdt.internal.compiler.parser.Scanner;
 import org.eclipse.jdt.internal.compiler.util.Util;
+import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
 import org.eclipse.jdt.neon.formatter.linewrap.CommentWrapExecutor;
 import org.eclipse.jdt.neon.formatter.linewrap.WrapPreparator;
-import org.eclipse.jdt.neon.formatter.CommentsPreparator;
-import org.eclipse.jdt.internal.formatter.DefaultCodeFormatterOptions;
-import org.eclipse.jdt.neon.formatter.LineBreaksPreparator;
-import org.eclipse.jdt.neon.formatter.SpacePreparator;
-import org.eclipse.jdt.neon.formatter.TextEditsBuilder;
-import org.eclipse.jdt.neon.formatter.Token;
-import org.eclipse.jdt.neon.formatter.TokenManager;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.text.edits.MultiTextEdit;

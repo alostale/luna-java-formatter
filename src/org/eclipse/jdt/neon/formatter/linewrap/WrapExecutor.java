@@ -28,7 +28,6 @@ import org.eclipse.jdt.neon.formatter.TokenManager;
 import org.eclipse.jdt.neon.formatter.TokenTraverser;
 import org.eclipse.jdt.neon.formatter.Token.WrapMode;
 import org.eclipse.jdt.neon.formatter.Token.WrapPolicy;
-import org.eclipse.jdt.neon.formatter.linewrap.CommentWrapExecutor;
 import org.eclipse.jdt.neon.formatter.linewrap.WrapExecutor;
 
 @SuppressWarnings("restriction")

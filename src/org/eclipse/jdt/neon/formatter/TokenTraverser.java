@@ -12,8 +12,6 @@ package org.eclipse.jdt.neon.formatter;
 
 import java.util.List;
 
-import org.eclipse.jdt.neon.formatter.Token;
-
 /**
  * Helper class that can be subclassed every time an algorithm needs to swipe through all or part of the tokens and
  * easily keep track or previous and future tokens and whitespace.
