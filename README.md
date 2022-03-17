@@ -32,3 +32,4 @@ Original plugin can be found [here](http://eclipse-n-mati.blogspot.com.es/2015/0
 | 1.9.0   | 2021-06                      | Luna, Neon | Changed library dependency versions, rebuild of plugin with 2021-06 toolchain. |
 | 1.10.1  | 2021-09                      | Luna, Neon | Changed library dependency versions, addressed compiler warnings, addressed deprecated API warnings, addressed breaks caused by upstream API changes. |
 | 1.11.0  | 2021-12                      | Luna, Neon | No code changes, but rather a rebuild with the 2021-12 toolchain. |
+| 1.12.0  | 2022-03                      | Luna, Neon | Rebuild with the 2022-03 toolchain. |
