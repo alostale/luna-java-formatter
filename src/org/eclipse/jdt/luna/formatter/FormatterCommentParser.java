@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.eclipse.jdt.core.compiler.CharOperation;
 import org.eclipse.jdt.core.compiler.InvalidInputException;
+import org.eclipse.jdt.internal.compiler.ast.JavadocQualifiedTypeReference;
+import org.eclipse.jdt.internal.compiler.ast.JavadocSingleTypeReference;
 import org.eclipse.jdt.internal.compiler.classfmt.ClassFileConstants;
 import org.eclipse.jdt.internal.compiler.parser.JavadocParser;
 import org.eclipse.jdt.internal.compiler.parser.ScannerHelper;
@@ -60,12 +62,29 @@ public boolean parse(int start, int end) {
  * @see org.eclipse.jdt.internal.compiler.parser.JavadocParser#createArgumentReference(char[], int, boolean, java.lang.Object, long[], long)
  */
 protected Object createArgumentReference(char[] name, int dim, boolean isVarargs, Object ref, long[] dimPositions, long argNamePos) throws InvalidInputException {
-	FormatJavadocReference typeRef = (FormatJavadocReference) ref;
+  FormatJavadocReference typeRef = toFormatJavadocReference(ref);
 	if (dim > 0) {
 		typeRef.sourceEnd = (int) dimPositions[dim-1];
 	}
 	if (argNamePos >= 0) typeRef.sourceEnd = (int) argNamePos;
 	return ref;
+}
+
+private FormatJavadocReference toFormatJavadocReference(Object ref)
+{
+  FormatJavadocReference typeRef;
+  if(ref instanceof JavadocSingleTypeReference) {
+    JavadocSingleTypeReference j;
+    j = (JavadocSingleTypeReference)ref;
+    typeRef = new FormatJavadocReference(j.sourceStart, j.sourceEnd, this.scanner.getLineNumber(this.tagSourceStart));	  
+	}
+  else if(ref instanceof JavadocQualifiedTypeReference) {
+    JavadocQualifiedTypeReference j;
+    j = (JavadocQualifiedTypeReference)ref;
+    typeRef = new FormatJavadocReference(j.sourceStart, j.sourceEnd, this.scanner.getLineNumber(this.tagSourceStart));    
+  }
+  else { typeRef = (FormatJavadocReference) ref;}
+  return typeRef;
 }
 
 /* (non-Javadoc)
@@ -84,16 +103,25 @@ protected boolean createFakeReference(int start) {
  * @see org.eclipse.jdt.internal.compiler.parser.JavadocParser#createFieldReference(java.lang.Object)
  */
 protected Object createFieldReference(Object receiver) throws InvalidInputException {
-	int start = receiver == null ? this.memberStart : ((FormatJavadocReference)receiver).sourceStart;
+    int start = receiver == null ? this.memberStart : getSourceStart(receiver);
 	int lineStart = this.scanner.getLineNumber(start);
 	return new FormatJavadocReference(start, (int) this.identifierPositionStack[0], lineStart);
+}
+
+private int getSourceStart(Object receiver) {
+  if(receiver instanceof JavadocQualifiedTypeReference)
+  return ((JavadocQualifiedTypeReference)receiver).sourceStart;
+  else if(receiver instanceof JavadocSingleTypeReference) {
+    return ((JavadocSingleTypeReference)receiver).sourceStart;
+  }
+  return -1;
 }
 
 /* (non-Javadoc)
  * @see org.eclipse.jdt.internal.compiler.parser.JavadocParser#createMethodReference(java.lang.Object, java.util.List)
  */
 protected Object createMethodReference(Object receiver, @SuppressWarnings("rawtypes") List arguments) throws InvalidInputException {
-	int start = receiver == null ? this.memberStart : ((FormatJavadocReference) receiver).sourceStart;
+    int start = receiver == null ? this.memberStart : getSourceStart(receiver);
 	int lineStart = this.scanner.getLineNumber(start);
 	return new FormatJavadocReference(start, this.scanner.getCurrentTokenEndPosition(), lineStart);
 }
@@ -649,8 +677,8 @@ protected boolean pushParamName(boolean isTypeParam) {
  * @see org.eclipse.jdt.internal.compiler.parser.JavadocParser#pushSeeRef(java.lang.Object)
  */
 protected boolean pushSeeRef(Object statement) {
-	FormatJavadocReference reference = (FormatJavadocReference) statement;
-	int lineTagStart = this.scanner.getLineNumber(this.tagSourceStart);
+  FormatJavadocReference reference = toFormatJavadocReference(statement);
+  int lineTagStart = this.scanner.getLineNumber(this.tagSourceStart);
 	FormatJavadocBlock block = new FormatJavadocBlock(this.tagSourceStart, this.tagSourceEnd, lineTagStart, this.tagValue);
 	block.reference = reference;
 	block.sourceEnd = reference.sourceEnd;
@@ -730,7 +758,7 @@ private void pushText(int start, int end, int htmlIndex, int htmlDepth) {
 protected boolean pushThrowName(Object typeRef) {
 	int lineStart = this.scanner.getLineNumber(this.tagSourceStart);
 	FormatJavadocBlock block = new FormatJavadocBlock(this.tagSourceStart, this.tagSourceEnd, lineStart, this.tagValue);
-	block.reference = (FormatJavadocReference) typeRef;
+	block.reference = toFormatJavadocReference(typeRef);
 	block.sourceEnd = block.reference.sourceEnd;
 	pushOnAstStack(block, true);
 	return true;
